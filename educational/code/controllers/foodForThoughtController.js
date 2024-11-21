@@ -1,52 +1,73 @@
-import { JSONFilePreset } from "lowdb/node";
+import db from '../db.js';  // Import the MySQL connection
 
-// Read or create db.json
-// defaultData specifies the structure of the database
-const defaultData = { 
-  meta: {
-    "title": "List of food for thought",
-    "date": "November 2024"
-  }, 
-  foodForThought: [] 
-};
-const db = await JSONFilePreset('db.json', defaultData);
-const foodForThought = db.data.foodForThought;
-
+// Get all Food for Thought
 export async function responseFoodForThought(req, res) {
-  res.status(200).send(foodForThought);
+  const query = 'SELECT * FROM Food_for_Thought';  // SQL query to fetch all records
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching data:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    res.status(200).json(results);
+  });
 }
 
+// Add a new Food for Thought
 export async function updateFoodForThought(req, res) {
-  // fixme check if id exists
-  let id = req.query.id;
-  let thought = req.query.thought;
-  let category = req.query.category;
-  let time = new Date().toLocaleString();
-  let food = {id: id, thought: thought, category: category, time: time};  
-  // todo remove log
-  console.log(food);
-  foodForThought.push(food);
-  await db.write();
+  // Get data from the request body or query parameters
+  let { id, thought, category } = req.body;  // Assuming the data is sent in the body
+  let time = new Date().toLocaleString();  // Current timestamp
+  
+  // Check if required fields are provided
+  if (!id || !thought || !category) {
+    return res.status(400).json({ error: 'Missing required fields: id, thought, category' });
+  }
 
-  res.status(201).send(`I added this thought: ${JSON.stringify(food)}?`);
+  // Insert new food for thought into the database
+  const query = 'INSERT INTO Food_for_Thought (FfT_ID, Title, Description, Category) VALUES (?, ?, ?, ?)';
+  
+  db.query(query, [id, thought, category, time], (err, results) => {
+    if (err) {
+      console.error('Error inserting data:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    res.status(201).json({
+      message: `Food for Thought added successfully!`,
+      insertedId: results.insertId,  // Returning the ID of the newly inserted record
+    });
+  });
 }
 
+// Get a specific Food for Thought by ID
 export async function responseByIdFoodForThought(req, res) {
   let id = req.params.id;
-  let food = foodForThought.find(food => food.id === id);
-  if (food) {
-    res.status(200).send(food);
-  } else {
-    res.status(404).send('Food for thought not found');
-  }
+  const query = 'SELECT * FROM Food_for_Thought WHERE FfT_ID = ?';
+  
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error fetching data:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Food for thought not found' });
+    }
+    res.status(200).json(results[0]);  // Return the first (and only) result
+  });
 }
 
+// Get Food for Thought by category
 export async function responseByCategoryExample(req, res) {
   let category = req.params.category;
-  let filtered = foodForThought.filter(food => food.category.toLowerCase() === category.toLowerCase());
-  if (filtered.length > 0) {
-    res.status(200).send(filtered);
-  } else {
-    res.status(404).send('No food for thought found in this category');
-  }
+  const query = 'SELECT * FROM Food_for_Thought WHERE Category = ?';
+  
+  db.query(query, [category], (err, results) => {
+    if (err) {
+      console.error('Error fetching data:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'No food for thought found in this category' });
+    }
+    res.status(200).json(results);  // Return filtered results
+  });
 }

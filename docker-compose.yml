@@ -10,6 +10,12 @@ services:
       - "3011:3011"
     working_dir: /usr/src/app
     command: bash -c "npm install && npm run dev"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=educational_db
+
   gateway:
     container_name: apigateway
     build: ./apigateway
@@ -22,6 +28,37 @@ services:
     working_dir: /usr/src/app
     command: bash -c "npm install && npm run dev"
 
+  mysql:
+    container_name: mysql-server
+    image: mysql:8.0
+    networks:
+      - msexample
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=educational_db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=userpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin:latest
+    networks:
+      - msexample
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=rootpassword
+    ports:
+      - "8080:80"
+
 networks:
   msexample:
     driver: bridge
+
+volumes:
+  mysql-data:
