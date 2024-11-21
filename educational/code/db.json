@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "List of food for thought",
+    "date": "November 2024"
+  },
+  "foodForThought": [
+    {
+      "id": "1",
+      "thought": "Happiness is not something ready-made. It comes from your own actions.",
+      "category": "Motivation",
+      "time": "2024-11-20 10:00 AM"
+    },
+    {
+      "id": "2",
+      "thought": "The journey of a thousand miles begins with one step.",
+      "category": "Inspiration",
+      "time": "2024-11-19 08:45 PM"
+    },
+    {
+      "id": "3",
+      "thought": "In the middle of every difficulty lies opportunity.",
+      "category": "Wisdom",
+      "time": "2024-11-18 02:15 PM"
+    }
+  ]
+}
