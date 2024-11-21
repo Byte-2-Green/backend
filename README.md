@@ -17,9 +17,21 @@ We save credentials to other services in a `variables.env` file. This file is in
 
 You can change the ports of your server via `variables.env`
 
-- Microservice: sample microservice running on port:3011
+- Educational: sample microservice running on port:3011
 - Apigateway: sample API Gateway - running on port:3010
 
 ## Containers
 
 Check the readme files of each container to understand the setup
+
+
+# Food for Thought API Documentation
+
+## Request/Response Example Summary
+
+| **Method** | **Endpoint**                        | **Description**                                    | **Request Example**                                            | **Response Example**                                            |
+|------------|-------------------------------------|----------------------------------------------------|---------------------------------------------------------------|---------------------------------------------------------------|
+| GET        | /foodForThought                     | Get all food for thought                           | No request body required                                       | `[ { "id": "1", "thought": "...", "category": "...", "time": "..." } ]` |
+| POST       | /foodForThought                     | Add a new food for thought                         | `{ "id": "3", "thought": "Some thought", "category": "Wisdom" }` | `{ "id": "3", "thought": "Some thought", "category": "Wisdom", "time": "..." }` |
+| GET        | /foodForThought/:id                 | Get food for thought by ID                         | `/foodForThought/1`                                             | `{ "id": "1", "thought": "...", "category": "...", "time": "..." }` |
+| GET        | /foodForThought/category/:category   | Get food for thought by category                   | `/foodForThought/category/Motivation`                           | `[ { "id": "1", "thought": "...", "category": "...", "time": "..." } ]` |
