@@ -1,37 +1,79 @@
-# Backend example
+# Backend Example
 
-In this backend example for a project, a folder is created for each micoservice. 
+This is the backend for the project from Byte-2-Green, every microservice has its own folder
 
-1. Install docker to your system
-2. Run `docker compose up` and you are good to go
+## Setup
+
+1. Install Docker on your system.
+2. Run `docker compose up` to start the application.
+
+---
 
 ## Modules
 
-We use ES6 module system to import and export modules.
+We use the **ES6 module system** to import and export modules.
 
-## Variables.env
+---
 
-We save credentials to other services in a `variables.env` file. This file is included in this template. However, it is common use not to include it in a public repository. There are some default key value pairs included to demonstrate its working.
+## `variables.env`
+
+- Credentials to other services are stored in the `variables.env` file.
+- This file is included in the template for demonstration purposes. 
+- **Note:** It is a common practice not to include `variables.env` in a public repository.
+- The file includes default key-value pairs to showcase its functionality.
+
+---
 
 ## Ports
 
-You can change the ports of your server via `variables.env`
+You can modify the server ports via the `variables.env` file:
 
-- Educational: sample microservice running on port:3011
-- Apigateway: sample API Gateway - running on port:3010
+- **Educational Service:** Runs on `port:3011`.
+- **API Gateway:** Runs on `port:3010`.
+
+---
 
 ## Containers
 
-Check the readme files of each container to understand the setup
+Refer to the `README.md` files within each container for detailed setup instructions.
 
+---
 
 # Food for Thought API Documentation
 
+## Base URL
+
+http://localhost:3011/
+
+---
+
 ## Request/Response Example Summary
 
-| **Method** | **Endpoint**                        | **Description**                                    | **Request Example**                                            | **Response Example**                                            |
-|------------|-------------------------------------|----------------------------------------------------|---------------------------------------------------------------|---------------------------------------------------------------|
-| GET        | /foodForThought                     | Get all food for thought                           | No request body required                                       | `[ { "id": "1", "thought": "...", "category": "...", "time": "..." } ]` |
-| POST       | /foodForThought                     | Add a new food for thought                         | `{ "id": "3", "thought": "Some thought", "category": "Wisdom" }` | `{ "id": "3", "thought": "Some thought", "category": "Wisdom", "time": "..." }` |
-| GET        | /foodForThought/:id                 | Get food for thought by ID                         | `/foodForThought/1`                                             | `{ "id": "1", "thought": "...", "category": "...", "time": "..." }` |
-| GET        | /foodForThought/category/:category   | Get food for thought by category                   | `/foodForThought/category/Motivation`                           | `[ { "id": "1", "thought": "...", "category": "...", "time": "..." } ]` |
+| **Method** | **Endpoint**                         | **Description**                                    | **Request Example**                                             | **Response Example**                                             |
+|------------|--------------------------------------|----------------------------------------------------|-----------------------------------------------------------------|-------------------------------------------------------------------|
+| `GET`      | `/foodForThought`                    | Get all food for thought                           | _No request body required_                                      | `[ { "id": "1", "thought": "Happiness depends on ourselves.", "category": "Motivation" } ]` |
+| `POST`     | `/foodForThought`                    | Add a new food for thought                         | `{ "thought": "Some thought", "category": "Wisdom" }`           | `{ "id": "3", "thought": "Some thought", "category": "Wisdom" }` |
+| `GET`      | `/foodForThought/:id`                | Get food for thought by ID                         | `/foodForThought/1`                                             | `{ "id": "1", "thought": "Happiness depends on ourselves.", "category": "Motivation" }` |
+| `GET`      | `/foodForThought/category/:category` | Get food for thought by category                   | `/foodForThought/category/Motivation`                          | `[ { "id": "1", "thought": "Happiness depends on ourselves.", "category": "Motivation" } ]` |
+
+---
+
+## Error Responses
+
+- **400 Bad Request:** Invalid input or malformed request.
+  ```json
+  {
+    "error": "Invalid input data."
+  }
+  ```
+- **404 Not Found: Resource not found.
+  ```json
+  {
+    "error": "Food for thought not found."
+  }
+  ```
+- **500 Internal Server Error: Unexpected server error.
+  ```json
+  {
+    "error": "An error occurred while processing your request."
+  }
