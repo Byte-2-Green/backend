@@ -15,4 +15,7 @@ router.get('/foodForThought/:id', checkIfWork, responseByIdFoodForThought);
 // Route to get all food for thought by category
 router.get('/foodForThought/category/:category', checkIfWork, responseByCategoryExample);
 
+router.get('/educational', (req, res) => {
+  res.send('Hello from educational');
+});
 export default router;

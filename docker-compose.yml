@@ -16,18 +16,6 @@ services:
       - DB_PASSWORD=rootpassword
       - DB_NAME=educational_db
 
-  gateway:
-    container_name: apigateway
-    build: ./apigateway
-    volumes:
-      - ./apigateway/code:/usr/src/app
-    networks:
-      - msexample
-    ports:
-      - "3010:3010"
-    working_dir: /usr/src/app
-    command: bash -c "npm install && npm run dev"
-
   mysql:
     container_name: mysql-server
     image: mysql:8.0
