@@ -5,7 +5,7 @@ import cors from 'cors';
 const app = express();
 const router = express.Router();
 
-app.use(cors());
+router.get('/foodForThought', cors(), responseFoodForThought);
 
 // Route to get all food for thought
 router.get('/foodForThought', checkIfWork, responseFoodForThought);
