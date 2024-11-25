@@ -1,7 +1,11 @@
 import express from 'express';
 import { responseFoodForThought, updateFoodForThought, responseByIdFoodForThought, responseByCategoryExample } from '../controllers/foodForThoughtController.js'; // Adjust the path to your file
 import { checkIfWork } from '../middleware/foodForThougthMiddelware.js';
+import cors from 'cors';
 const router = express.Router();
+
+const cors = require('cors');
+router.use(cors());
 
 // Route to get all food for thought
 router.get('/foodForThought', checkIfWork, responseFoodForThought);
@@ -15,7 +19,4 @@ router.get('/foodForThought/:id', checkIfWork, responseByIdFoodForThought);
 // Route to get all food for thought by category
 router.get('/foodForThought/category/:category', checkIfWork, responseByCategoryExample);
 
-router.get('/educational', (req, res) => {
-  res.send('Hello from educational');
-});
 export default router;
