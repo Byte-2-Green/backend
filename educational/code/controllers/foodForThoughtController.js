@@ -16,7 +16,6 @@ export async function responseFoodForThought(req, res) {
 export async function updateFoodForThought(req, res) {
   // Get data from the request body or query parameters
   let { id, thought, category } = req.body;  // Assuming the data is sent in the body
-  let time = new Date().toLocaleString();  // Current timestamp
   
   // Check if required fields are provided
   if (!id || !thought || !category) {
