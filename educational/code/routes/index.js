@@ -1,11 +1,8 @@
 import express from 'express';
 import { responseFoodForThought, updateFoodForThought, responseByIdFoodForThought, responseByCategoryExample } from '../controllers/foodForThoughtController.js'; // Adjust the path to your file
 import { checkIfWork } from '../middleware/foodForThougthMiddelware.js';
-import cors from 'cors';
-const router = express.Router();
 
-const cors = require('cors');
-router.use(cors());
+const router = express.Router();
 
 // Route to get all food for thought
 router.get('/foodForThought', checkIfWork, responseFoodForThought);
