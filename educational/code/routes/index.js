@@ -7,6 +7,11 @@ const router = express.Router();
 
 app.use(cors());
 
+// routes
+router.get('/', (req, res, next) => {
+  res.json('hi');
+});
+
 // Route to get all food for thought
 router.get('/foodForThought', checkIfWork, responseFoodForThought);
 
