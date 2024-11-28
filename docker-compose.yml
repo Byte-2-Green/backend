@@ -29,8 +29,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
-      - ./mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
+      - ./educational/mysql/data:/var/lib/mysql
+      - ./educational/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
 
   phpmyadmin:
     container_name: phpmyadmin
