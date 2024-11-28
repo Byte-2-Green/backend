@@ -7,15 +7,15 @@ services:
     networks:
       - msexample
     ports:
-      - "3011:3011"
+      - "${PORT}:${PORT}"
     working_dir: /usr/src/app
     command: bash -c "npm install && npm run dev"
     environment:
-      - DB_HOST=mysql
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=educational_db
-      - FRONTEND_URL=http://frontend:5173
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - FRONTEND_URL=${FRONTEND_URL}
 
   mysql:
     container_name: mysql-server
@@ -28,7 +28,7 @@ services:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=userpassword
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
     volumes:
       - ./educational/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
       - mysql-data:/var/lib/mysql
