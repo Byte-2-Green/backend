@@ -15,6 +15,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=rootpassword
       - DB_NAME=educational_db
+      - FRONTEND_URL=http://frontend:5173
 
   mysql:
     container_name: mysql-server
@@ -29,8 +30,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./educational/mysql/data:/var/lib/mysql
       - ./educational/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
+      - mysql-data:/var/lib/mysql
 
   phpmyadmin:
     container_name: phpmyadmin
