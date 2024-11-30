@@ -1,7 +1,8 @@
 services:
   microservice:
     container_name: educational
-    build: ./educational
+    build:
+      context: ./educational
     volumes:
       - ./educational/code:/usr/src/app
     networks:
