@@ -2,11 +2,13 @@ FROM node:18
 
 WORKDIR /usr/src/app
 
-COPY ./educational/package*.json ./
+# Copiar package.json para a pasta de trabalho
+COPY educational/package*.json ./
 
+# Instalar dependências
 RUN npm install
 
-COPY ./educational .
+COPY educational .
 
 EXPOSE ${PORT}
 

@@ -6,7 +6,7 @@ services:
   microservice:
     container_name: educational
     build:
-      context: ./educational
+      context: .
       dockerfile: Dockerfile
     volumes:
       - ./educational/code:/usr/src/app
