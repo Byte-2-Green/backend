@@ -1,0 +1,29 @@
+name: CI for CO2 App Backend
+
+on:
+  repository_dispatch:
+    types: [deploy-backend]
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build and start services with Docker Compose
+      run: docker compose up --build -d
+
+    - name: Wait for frontend to be ready
+      run: |
+        timeout 30 bash -c 'until curl -sf http://localhost:5173; do echo "Waiting for frontend..."; sleep 5; done'
+
+    - name: Shut down services
+      run: docker compose down
