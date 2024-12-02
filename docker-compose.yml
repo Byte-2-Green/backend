@@ -20,6 +20,25 @@ services:
     depends_on:
       - mysql # Wait for MySQL to be ready before starting the microservice
 
+  challengesnotify:
+    container_name: challengesnotify
+    build: ./challengenotify
+    volumes:
+      - ./challengenotify/code:/usr/src/app
+    networks:
+      - challengesnet
+    ports:
+      - "3012:3012"
+    working_dir: /usr/src/app
+    command: bash -c "npm install && npm run dev"
+    environment:
+      - DB_HOST=challengesdb
+      - DB_USER=user
+      - DB_PASSWORD=userpassword
+      - DB_NAME=challenges_db
+    depends_on:
+      - challengesdb # Wait for the challenges database to be ready
+
   api-gateway:
     container_name: api-gateway
     build: ./api-gateway
@@ -53,11 +72,28 @@ services:
       - ./educational/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
       - mysql-data:/var/lib/mysql
 
+  challengesdb:
+    container_name: challengesdb
+    image: mysql:8.0
+    networks:
+      - challengesnet
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=challenges_db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=userpassword
+    ports:
+      - "3307:3307"
+    volumes:
+      - ./challengenotify/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
+      - challenges-data:/var/lib/mysql
+
   phpmyadmin:
     container_name: phpmyadmin
     image: phpmyadmin:latest
     networks:
       - msexample
+      - challengesnet
     environment:
       - PMA_HOST=mysql
       - PMA_USER=root
@@ -68,6 +104,9 @@ services:
 networks:
   msexample:
     driver: bridge
+  challengesnet:
+    driver: bridge
 
 volumes:
   mysql-data:
+  challenges-data:
