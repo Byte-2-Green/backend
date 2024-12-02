@@ -19,6 +19,7 @@ services:
       - FRONTEND_URL=${FRONTEND_URL}
     depends_on:
       - mysql-server-educational
+    restart: always
 
   mysql-server-educational:
     container_name: mysql-server-educational
@@ -57,6 +58,7 @@ services:
       - FRONTEND_URL=${FRONTEND_URL}
     depends_on:
       - mysql-server-challenges
+    restart: always
 
   mysql-server-challenges:
     container_name: mysql-server-challenges
