@@ -17,6 +17,26 @@ services:
       - DB_NAME=${DB_NAME}
       - FRONTEND_URL=${FRONTEND_URL}
 
+    depends_on:
+      - mysql # Wait for MySQL to be ready before starting the microservice
+
+  api-gateway:
+    container_name: api-gateway
+    build: ./api-gateway
+    volumes:
+      - ./api-gateway/code:/usr/src/app
+    networks:
+      - msexample
+    ports:
+      - "3010:3010"
+    working_dir: /usr/src/app
+    command: bash -c "npm install && npm run dev"
+    environment:
+      - PORT=3010
+    depends_on:
+      - microservice # Wait for the microservice to be ready before starting the API Gateway
+      - mysql # Wait for MySQL to be ready before starting the API Gateway
+
   mysql:
     container_name: mysql-server
     image: mysql:8.0
