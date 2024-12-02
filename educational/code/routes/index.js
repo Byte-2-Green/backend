@@ -5,18 +5,16 @@ import cors from 'cors';
 const app = express();
 const router = express.Router();
 
-router.get('/foodForThought', cors(), responseFoodForThought);
-
 // Route to get all food for thought
-router.get('/foodForThought', checkIfWork, responseFoodForThought);
+router.get('/foodForThought', cors(), checkIfWork, responseFoodForThought);
 
 // Route to add a new food for thought
-router.post('/foodForThought', checkIfWork, updateFoodForThought);
+router.post('/foodForThought', cors(), checkIfWork, updateFoodForThought);
 
 // Route to get a specific food for thought by ID
-router.get('/foodForThought/:id', checkIfWork, responseByIdFoodForThought);
+router.get('/foodForThought/:id', cors(), checkIfWork, responseByIdFoodForThought);
 
 // Route to get all food for thought by category
-router.get('/foodForThought/category/:category', checkIfWork, responseByCategoryExample);
+router.get('/foodForThought/category/:category', cors(), checkIfWork, responseByCategoryExample);
 
 export default router;
