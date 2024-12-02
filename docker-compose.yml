@@ -7,31 +7,66 @@ services:
     networks:
       - msexample
     ports:
-      - "${PORT}:${PORT}"
+      - "${EDUCATIONAL_PORT}:${EDUCATIONAL_PORT}"
     working_dir: /usr/src/app
     command: bash -c "npm install && npm run dev"
     environment:
-      - DB_HOST=${DB_HOST}
+      - DB_HOST=mysql-educational
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
+      - DB_NAME=educational_db
       - FRONTEND_URL=${FRONTEND_URL}
 
-  mysql:
-    container_name: mysql-server
+   mysql-educational:
+    container_name: mysql-server-educational
     image: mysql:8.0
     networks:
-      - msexample
+      - mseducational
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=educational_db
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=userpassword
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - "${MYSQL_PORT}:${MYSQL_PORT}"
+      - "3306:${MYSQL_PORT}"
     volumes:
       - ./educational/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
+      - mysql-data-educational:/var/lib/mysql
+
+  microservice:
+    container_name: challenges
+    build: ./challenges
+    volumes:
+      - ./challenges/code:/usr/src/app
+    networks:
+      - mschallenges
+    ports:
+      - "${CHALLENGES_PORT}:${CHALLENGES_PORT}"
+    working_dir: /usr/src/app
+    command: bash -c "npm install && npm run dev"
+    environment:
+      - DB_HOST=mysql-challenges
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=challenges_db
+      - FRONTEND_URL=${FRONTEND_URL}
+
+   mysql-challenges:
+    container_name: mysql-server-challenges
+    image: mysql:8.0
+    networks:
+      - mschallenges
+    environment:
+       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=challenges_db
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3307:${MYSQL_PORT}"
+    volumes:
+      - ./challenges/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
       - mysql-data:/var/lib/mysql
+
 
   phpmyadmin:
     container_name: phpmyadmin
@@ -39,15 +74,18 @@ services:
     networks:
       - msexample
     environment:
-      - PMA_HOST=mysql
+      - PMA_HOST=mysql-educational
       - PMA_USER=root
-      - PMA_PASSWORD=rootpassword
+      - PMA_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
       - "8080:80"
 
 networks:
-  msexample:
+  mseducational:
+    driver: bridge
+  mschallenges:
     driver: bridge
 
 volumes:
-  mysql-data:
+  mysql-data-educational:
+  mysql-data-challenges:
