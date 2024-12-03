@@ -13,8 +13,19 @@ const educationalProxy = createProxyMiddleware({
   },
 });
 
+const challengeProxy = createProxyMiddleware({
+  target:'http://challenges:3012',
+  changeOrigin: true,
+  onError: (err, req, res) => {
+    console.error(`Error occurred while proxying: ${err.message}`);
+    res.status(502).json({ error: 'Microservice unavailable' });
+  },
+});
+
 // route to educational microservice
 router.use('/educational', cors(), educationalProxy);
+
+router.use('/challenges', cors(), challengeProxy);
 
 router.get('/', (req, res) => {
   res.send('Nothing to see here');
