@@ -20,6 +20,24 @@ services:
       - mysql-server-educational
     restart: always
 
+  api-gateway:
+    container_name: api-gateway
+    build: ./api-gateway
+    volumes:
+      - ./api-gateway/code:/usr/src/app
+    networks:
+      - myeducational
+      - mychallenges
+    ports:
+      - "3010:3010"
+    working_dir: /usr/src/app
+    command: bash -c "npm install && npm run dev"
+    environment:
+      - PORT=3010
+    depends_on:
+      - microservice # Wait for the microservice to be ready before starting the API Gateway
+      - mysql-server-educational # Wait for MySQL to be ready before starting the API Gateway
+
   mysql-server-educational:
     container_name: mysql-server-educational
     image: mysql:8.0
@@ -54,6 +72,7 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     depends_on:
+      - microservice
       - mysql-server-challenges
     restart: always
 
