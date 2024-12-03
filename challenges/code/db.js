@@ -1,10 +1,10 @@
 import mysql from 'mysql2';
 
 const db = mysql.createConnection({
-  host: 'mysql-server-educational',  // Docker where MySQL is running 
+  host: 'mysql-server-challenges',  // Docker where MySQL is running 
   user: 'user',       // MySQL user
   password: 'userpassword', // MySQL password
-  database: 'educational_db'  // Database name
+  database: 'challenges_db'  // Database name
 });
 
 db.connect((err) => {
