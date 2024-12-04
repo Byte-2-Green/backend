@@ -4,12 +4,13 @@ services:
     build: ./educational
     volumes:
       - ./educational/code:/usr/src/app
+      - ./scripts/wait-for-it.sh:/wait-for-it.sh # Mount wait-for-it script
     networks:
       - myeducational  
     ports:
       - "${EDUCATIONAL_PORT}:${EDUCATIONAL_PORT}"
     working_dir: /usr/src/app
-    command: bash -c "npm install && npm run dev"
+    command: bash -c "/wait-for-it.sh ${EDUCATIONAL_DB_HOST}:${EDUCATIONAL_MYSQL_PORT} --timeout=30 --strict -- npm install && npm update && npm run dev"
     environment:
       - EDUCATIONAL_DB_HOST=${EDUCATIONAL_DB_HOST}:${EDUCATIONAL_MYSQL_PORT}
       - EDUCATIONAL_DB_NAME=${EDUCATIONAL_DB_NAME}
@@ -25,13 +26,14 @@ services:
     build: ./api-gateway
     volumes:
       - ./api-gateway/code:/usr/src/app
+      - ./scripts/wait-for-it.sh:/wait-for-it.sh # Mount wait-for-it script
     networks:
       - myeducational
       - mychallenges
     ports:
       - "3010:3010"
     working_dir: /usr/src/app
-    command: bash -c "npm install && npm run dev"
+    command: bash -c "/wait-for-it.sh ${EDUCATIONAL_DB_HOST}:${EDUCATIONAL_MYSQL_PORT} --timeout=30 --strict -- npm install && npm update && npm run dev"
     environment:
       - PORT=3010
     depends_on:
@@ -59,12 +61,13 @@ services:
     build: ./challenges
     volumes:
       - ./challenges/code:/usr/src/app
+      - ./scripts/wait-for-it.sh:/wait-for-it.sh # Mount wait-for-it script
     networks:
       - mychallenges  
     ports:
       - "${CHALLENGES_PORT}:${CHALLENGES_PORT}"
     working_dir: /usr/src/app
-    command: bash -c "npm install && npm run dev"
+    command: bash -c "/wait-for-it.sh ${CHALLENGES_DB_HOST}:${CHALLENGES_MYSQL_PORT} --timeout=30 -- npm install && npm update && npm run dev"
     environment:
       - CHALLENGES_DB_HOST=${CHALLENGES_DB_HOST}:${CHALLENGES_MYSQL_PORT}
       - CHALLENGES_DB_NAME=${CHALLENGES_DB_NAME}
@@ -72,7 +75,6 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     depends_on:
-      - microservice
       - mysql-server-challenges
     restart: always
 
