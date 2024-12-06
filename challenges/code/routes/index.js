@@ -1,12 +1,11 @@
 import express from 'express';
-import { test, denyChallenge } from '../controllers/challengesController.js';
 import cors from 'cors';
+import { test, denyChallenge, getDeniedChallenges } from '../controllers/challengesController.js';
 
-const app = express();
 const router = express.Router();
 
-router.get('/challenges', cors(), test);
-
-router.post('/challenges/deny', cors(), denyChallenge);
+router.get('/challenges', test);
+router.post('/challenges/deny/:id', denyChallenge);
+router.get('/denied-challenges', getDeniedChallenges);
 
 export default router;
