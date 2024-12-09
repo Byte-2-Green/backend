@@ -1,5 +1,5 @@
 import express from 'express';
-import { test, getNotificationByChallengeId, getNotificationById, getNotifications, createNotification } from '../controllers/challengesController.js';
+import { test, getNotificationByChallengeId, getNotificationById, getNotifications, createNotification, denyChallenge, getDeniedChallenges } from '../controllers/challengesController.js';
 import cors from 'cors';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger-config.js";
@@ -19,6 +19,10 @@ router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *         description: A list of challenges
  */
 router.get('/challenges', cors(), test);
+
+router.post('/challenges/deny/:id', cors(), denyChallenge);
+
+router.get('/denied-challenges', cors(), getDeniedChallenges);
 
 /**
  * @swagger
@@ -98,3 +102,4 @@ router.get('/notifications/challenge/:id', cors(), getNotificationByChallengeId)
 router.post('/notifications', cors(), createNotification);
 
 export default router;
+
