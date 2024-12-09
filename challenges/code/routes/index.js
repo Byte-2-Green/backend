@@ -4,7 +4,6 @@ import cors from 'cors';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger-config.js";
 
-const app = express();
 const router = express.Router();
 
 // Serve Swagger UI at /api-docs
