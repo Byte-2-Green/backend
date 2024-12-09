@@ -22,13 +22,8 @@ const challengeProxy = createProxyMiddleware({
   },
 });
 
-// route to educational microservice
 router.use('/educational', cors(), educationalProxy);
 
 router.use('/challenges', cors(), challengeProxy);
-
-router.get('/', (req, res) => {
-  res.send('Nothing to see here');
-  });
 
 export default router;
