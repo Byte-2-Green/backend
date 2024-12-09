@@ -71,7 +71,9 @@ export async function getDeniedChallenges(req, res) {
           return res.status(500).json({ error: 'Internal Server Error' });
       }
       res.status(200).json(results);
-    
+    });
+  }
+  
 // Get all notifications 
 export async function getNotifications(req, res) {
   const query = 'SELECT * FROM Notifications';  // SQL query to fetch all records
