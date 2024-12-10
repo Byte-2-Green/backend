@@ -1,5 +1,5 @@
 import express from 'express';
-import { test, getNotificationByChallengeId, getNotificationById, getNotifications, createNotification, denyChallenge, getDeniedChallenges } from '../controllers/challengesController.js';
+import { test, getNotificationById, getNotifications, createNotification, denyChallenge, getDeniedChallenges } from '../controllers/challengesController.js';
 import cors from 'cors';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger-config.js";
@@ -54,26 +54,6 @@ router.get('/notifications', cors(), getNotifications);
  *         description: Notification not found
  */
 router.get('/notifications/:id', cors(), getNotificationById);
-
-/**
- * @swagger
- * /notifications/challenge/{id}:
- *   get:
- *     summary: Get notifications by challenge ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The challenge ID to filter notifications
- *     responses:
- *       200:
- *         description: A list of notifications related to the specified challenge
- *       404:
- *         description: No notifications found for this challenge
- */
-router.get('/notifications/challenge/:id', cors(), getNotificationByChallengeId);
 
 /**
  * @swagger
