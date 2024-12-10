@@ -15,6 +15,4 @@ router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Enable CORS
 router.use(cors());
 
-
-
 export default router;
