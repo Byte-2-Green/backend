@@ -5,13 +5,13 @@ FROM node:20
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json to the container
-COPY educational/code/package*.json ./
+COPY code/package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the application files
-COPY educational/code ./
+COPY code ./
 
 # Expose the application's port
 EXPOSE 3011
