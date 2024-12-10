@@ -11,10 +11,10 @@ COPY code/package*.json ./
 RUN npm install
 
 # Copy the application code
-COPY code .
+# COPY code .
 
 # Copy the MySQL initialization scripts
-COPY mysql /docker-entrypoint-initdb.d/
+# COPY mysql /docker-entrypoint-initdb.d/
 
 # Expose the port the app runs on
 EXPOSE 3012
