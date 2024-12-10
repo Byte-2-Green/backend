@@ -4,7 +4,8 @@ const db = mysql.createConnection({
   host: process.env.EDUCATIONAL_DB_HOST || 'localhost',
   user: process.env.EDUCATIONAL_DB_USER || 'user',
   password: process.env.EDUCATIONAL_DB_PASSWORD || 'userpassword',
-  database: process.env.EDUCATIONAL_DB_NAME || 'educational_db'
+  database: process.env.EDUCATIONAL_DB_NAME || 'educational_db',
+  port: process.env.EDUCATIONAL_DB_PORT || 3306,
 });
 
 db.connect((err) => {
