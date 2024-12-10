@@ -20,8 +20,27 @@ router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  */
 router.get('/challenges', cors(), test);
 
+/**
+ * @swagger
+ * /challenges/deny/{id}:
+ *  post:
+ *   summary: Deny a challenge
+ *  parameters:
+ *   - in: path
+ *    name: id
+ *   required: true
+ */
 router.post('/challenges/deny/:id', cors(), denyChallenge);
 
+/**
+ * @swagger
+ * /denied-challenges:
+ *  get:
+ *  summary: Get all denied challenges
+ * responses:
+ * 200:
+ * description: A list of denied challenges
+ */
 router.get('/denied-challenges', cors(), getDeniedChallenges);
 
 /**
