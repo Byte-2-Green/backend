@@ -109,15 +109,3 @@ export async function createNotification(req, res) {
     res.status(201).json({ id: results.insertId });
   });
 }
-
-// Get a notification by Challenge_ID
-export async function getNotificationByChallengeId(req, res) {
-  const query = 'SELECT * FROM Notifications WHERE Challenge_ID = ?';  // SQL query to fetch a record by
-  db.query(query, [req.params.id], (err, results) => {
-    if (err) {
-      console.error('Error fetching data:', err);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
-    res.status(200).json(results);
-  });
-}

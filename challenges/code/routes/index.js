@@ -57,26 +57,6 @@ router.get('/notifications/:id', cors(), getNotificationById);
 
 /**
  * @swagger
- * /notifications/challenge/{id}:
- *   get:
- *     summary: Get notifications by challenge ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The challenge ID to filter notifications
- *     responses:
- *       200:
- *         description: A list of notifications related to the specified challenge
- *       404:
- *         description: No notifications found for this challenge
- */
-router.get('/notifications/challenge/:id', cors(), getNotificationByChallengeId);
-
-/**
- * @swagger
  * /notifications:
  *   post:
  *     summary: Create a new notification
