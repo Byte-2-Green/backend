@@ -1,29 +1,26 @@
 services:
-  microservice:
-    container_name: educational
+  educational:
     build: ./educational
     volumes:
       - ./educational/code:/usr/src/app
-      - educational-node-modules:/usr/src/app/node_modules # Persist node_modules
+      - educational-node-modules:/usr/src/app/node_modules 
     networks:
       - myeducational
     ports:
       - "${EDUCATIONAL_PORT}:${EDUCATIONAL_PORT}"
     working_dir: /usr/src/app
-    command: /bin/bash -c "npm install && npm run dev"  # Add npm install before running the app
+    command: /bin/bash -c "npm install && npm run dev" 
     environment:
       - EDUCATIONAL_DB_HOST=${EDUCATIONAL_DB_HOST}:${EDUCATIONAL_MYSQL_PORT}
       - EDUCATIONAL_DB_NAME=${EDUCATIONAL_DB_NAME}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    restart: always
     depends_on:
       mysql-server-educational:
         condition: service_healthy
 
   api-gateway:
-    container_name: api-gateway
     build: ./api-gateway
     volumes:
       - ./api-gateway/code:/usr/src/app
@@ -38,7 +35,6 @@ services:
       - PORT=3010
 
   mysql-server-educational:
-    container_name: mysql-server-educational
     image: mysql:8.0
     networks:
       - myeducational
@@ -59,31 +55,28 @@ services:
       start_period: 10s
       timeout: 20s
 
-  microservice2:
-    container_name: challenges
+  challenges:
     build: ./challenges
     volumes:
       - ./challenges/code:/usr/src/app
-      - challenges-node-modules:/usr/src/app/node_modules # Persist node_modules
+      - challenges-node-modules:/usr/src/app/node_modules 
     networks:
       - mychallenges
     ports:
       - "${CHALLENGES_PORT}:${CHALLENGES_PORT}"
     working_dir: /usr/src/app
-    command: /bin/bash -c "npm install && npm run dev"  # Add npm install before running the app
+    command: /bin/bash -c "npm install && npm run dev"  
     environment:
       - CHALLENGES_DB_HOST=${CHALLENGES_DB_HOST}:${CHALLENGES_MYSQL_PORT}
       - CHALLENGES_DB_NAME=${CHALLENGES_DB_NAME}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    restart: always
     depends_on:
       mysql-server-challenges:
         condition: service_healthy
 
   mysql-server-challenges:
-    container_name: mysql-server-challenges
     image: mysql:8.0
     networks:
       - mychallenges
@@ -104,31 +97,28 @@ services:
       start_period: 10s
       timeout: 20s
 
-  microservice3:
-    container_name: users
+  users:
     build: ./users
     volumes:
       - ./users/code:/usr/src/app
-      - users-node-modules:/usr/src/app/node_modules # Persist node_modules
+      - users-node-modules:/usr/src/app/node_modules 
     networks:
       - myusers
     ports:
       - "${USERS_PORT}:${USERS_PORT}"
     working_dir: /usr/src/app
-    command: /bin/bash -c "npm install && npm run dev"  # Add npm install before running the app
+    command: /bin/bash -c "npm install && npm run dev"  
     environment:
       - USERS_DB_HOST=${USERS_DB_HOST}:${USERS_MYSQL_PORT}
       - USERS_DB_NAME=${USERS_DB_NAME}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    restart: always
     depends_on:
       mysql-server-users:
         condition: service_healthy
 
   mysql-server-users:
-    container_name: mysql-server-users
     image: mysql:8.0
     networks:
       - myusers
@@ -150,7 +140,6 @@ services:
       timeout: 20s
 
   phpmyadmin:
-    container_name: phpmyadmin
     image: phpmyadmin:latest
     networks:
       - myeducational
@@ -175,6 +164,6 @@ volumes:
   mysql-data-educational:
   mysql-data-challenges:
   mysql-data-users:
-  educational-node-modules: # Volume for educational node_modules
-  challenges-node-modules:  # Volume for challenges node_modules
-  users-node-modules: # Volume for users node_modules
+  educational-node-modules: 
+  challenges-node-modules:  
+  users-node-modules: 
