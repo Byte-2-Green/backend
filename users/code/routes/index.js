@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { getAllStatistics, getStatsByUserId } from '../controllers/UserController.js';
+import { getAllStatistics, getStatsByUserId, getStatsById } from '../controllers/UserController.js';
 import swaggerUi from "swagger-ui-express";
 import { checkIfWork } from '../middleware/UserMiddelware.js';
 import swaggerSpec from "./swagger-config.js";
@@ -41,6 +41,19 @@ router.get('/stats', getAllStatistics);
  * required: true
  * 
  */
-router.get('/stats/:userId', getStatsByUserId);
+router.get('/stats/user/:userId', getStatsByUserId);
+
+/**
+ * @swagger
+ * /stats/{statId}:
+ * get:
+ * summary: Get statistics by ID
+ * description: Get statistics from the database by ID
+ * parameters:
+ * - in: path
+ * name: statId
+ * required: true
+ */
+router.get('/stats/:statId', getStatsById);
 
 export default router;

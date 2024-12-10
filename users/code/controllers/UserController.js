@@ -73,6 +73,19 @@ export const getAllStatistics = (req, res) => {
   });
 }
 
+// Get statistics by ID
+export const getStatsById = (req, res) => {
+  const statId = req.params.statId;
+  db.query('SELECT * FROM Statistics WHERE Stat_ID = ?', [statId], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).send('Error executing query');
+      return;
+    }
+    res.json(result);
+  });
+}
+
 // Get statistics by user ID
 export const getStatsByUserId = (req, res) => {
   const userId = req.params.userId;
