@@ -1,6 +1,4 @@
-# Use the official Node.js 20 image
 FROM node:20.10.0
-
 # Set the working directory (this will create the directory if it doesn't exist)
 WORKDIR /usr/src/app
 
