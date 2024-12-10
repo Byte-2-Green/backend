@@ -3,13 +3,13 @@ import swaggerJSDoc from "swagger-jsdoc";
 const swaggerDefinition = {
   openapi: "3.0.0",
   info: {
-    title: "Educational Service API",
+    title: "Users Service API",
     version: "1.0.0",
-    description: "Endpoints for the Educational microservice",
+    description: "Endpoints for the Users microservice",
   },
   servers: [
     {
-      url: "http://localhost:3011",
+      url: "http://localhost:3013",
       description: "Educational Service",
     },
   ],
