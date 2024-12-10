@@ -4,47 +4,43 @@ services:
     build: ./educational
     volumes:
       - ./educational/code:/usr/src/app
-      - ./scripts/wait-for-it.sh:/wait-for-it.sh # Mount wait-for-it script
     networks:
-      - myeducational  
+      - myeducational
     ports:
       - "${EDUCATIONAL_PORT}:${EDUCATIONAL_PORT}"
     working_dir: /usr/src/app
-    command: bash -c "/wait-for-it.sh ${EDUCATIONAL_DB_HOST}:${EDUCATIONAL_MYSQL_PORT} --timeout=30 --strict -- npm install && npm update && npm run dev"
+    command: /bin/bash -c "npm install && npm run dev"  # Add npm install before running the app
     environment:
       - EDUCATIONAL_DB_HOST=${EDUCATIONAL_DB_HOST}:${EDUCATIONAL_MYSQL_PORT}
       - EDUCATIONAL_DB_NAME=${EDUCATIONAL_DB_NAME}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    depends_on:
-      - mysql-server-educational
     restart: always
-
+    depends_on:
+      mysql-server-educational:
+        condition: service_healthy
+ 
   api-gateway:
     container_name: api-gateway
     build: ./api-gateway
     volumes:
       - ./api-gateway/code:/usr/src/app
-      - ./scripts/wait-for-it.sh:/wait-for-it.sh # Mount wait-for-it script
     networks:
       - myeducational
       - mychallenges
     ports:
       - "3010:3010"
     working_dir: /usr/src/app
-    command: bash -c "/wait-for-it.sh ${EDUCATIONAL_DB_HOST}:${EDUCATIONAL_MYSQL_PORT} --timeout=30 --strict -- npm install && npm update && npm run dev"
+    command: npm run dev
     environment:
       - PORT=3010
-    depends_on:
-      - microservice # Wait for the microservice to be ready before starting the API Gateway
-      - mysql-server-educational # Wait for MySQL to be ready before starting the API Gateway
-
+ 
   mysql-server-educational:
     container_name: mysql-server-educational
     image: mysql:8.0
     networks:
-      - myeducational  
+      - myeducational
     environment:
       - MYSQL_DATABASE=${EDUCATIONAL_DB_NAME}
       - MYSQL_USER=${MYSQL_USER}
@@ -53,36 +49,42 @@ services:
     ports:
       - "${EDUCATIONAL_MYSQL_PORT}:${MYSQL_PORT}"
     volumes:
-      - ./educational/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
+      - ./educational/mysql/initdb:/docker-entrypoint-initdb.d
       - mysql-data-educational:/var/lib/mysql
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 20s
+ 
   microservice2:
     container_name: challenges
     build: ./challenges
     volumes:
       - ./challenges/code:/usr/src/app
-      - ./scripts/wait-for-it.sh:/wait-for-it.sh # Mount wait-for-it script
     networks:
-      - mychallenges  
+      - mychallenges
     ports:
       - "${CHALLENGES_PORT}:${CHALLENGES_PORT}"
     working_dir: /usr/src/app
-    command: bash -c "/wait-for-it.sh ${CHALLENGES_DB_HOST}:${CHALLENGES_MYSQL_PORT} --timeout=30 -- npm install && npm update && npm run dev"
+    command: /bin/bash -c "npm install && npm run dev"  # Add npm install before running the app
     environment:
       - CHALLENGES_DB_HOST=${CHALLENGES_DB_HOST}:${CHALLENGES_MYSQL_PORT}
       - CHALLENGES_DB_NAME=${CHALLENGES_DB_NAME}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    depends_on:
-      - mysql-server-challenges
     restart: always
-
+    depends_on:
+      mysql-server-challenges:
+        condition: service_healthy
+ 
   mysql-server-challenges:
     container_name: mysql-server-challenges
     image: mysql:8.0
     networks:
-      - mychallenges  
+      - mychallenges
     environment:
       - MYSQL_DATABASE=${CHALLENGES_DB_NAME}
       - MYSQL_USER=${MYSQL_USER}
@@ -91,28 +93,34 @@ services:
     ports:
       - "${CHALLENGES_MYSQL_PORT}:${MYSQL_PORT}"
     volumes:
-      - ./challenges/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
+      - ./challenges/mysql/initdb:/docker-entrypoint-initdb.d
       - mysql-data-challenges:/var/lib/mysql
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 20s
+ 
   phpmyadmin:
     container_name: phpmyadmin
     image: phpmyadmin:latest
     networks:
       - myeducational
-      - mychallenges 
+      - mychallenges
     environment:
       - PMA_HOSTS=mysql-server-educational,mysql-server-challenges
       - PMA_USER=${MYSQL_USER}
       - PMA_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "8080:80"
-
+ 
 networks:
   myeducational:
     driver: bridge
   mychallenges:
     driver: bridge
-
+ 
 volumes:
   mysql-data-educational:
   mysql-data-challenges:
