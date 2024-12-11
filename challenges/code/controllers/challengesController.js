@@ -76,7 +76,7 @@ export async function getDeniedChallenges(req, res) {
   
 // Get all notifications 
 export async function getNotifications(req, res) {
-  const query = 'SELECT * FROM Notifications';  // SQL query to fetch all records
+  const query = 'SELECT * FROM Notifications';
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching data:', err);
@@ -88,7 +88,7 @@ export async function getNotifications(req, res) {
 
 // Get a notification by ID
 export async function getNotificationById(req, res) {
-  const query = 'SELECT * FROM Notifications WHERE id = ?';  // SQL query to fetch a record by
+  const query = 'SELECT * FROM Notifications WHERE id = ?';
   db.query(query, [req.params.id], (err, results) => {
     if (err) {
       console.error('Error fetching data:', err);
@@ -100,7 +100,7 @@ export async function getNotificationById(req, res) {
 
 // Create a new notification
 export async function createNotification(req, res) {
-  const query = 'INSERT INTO Notifications SET ?';  // SQL query to insert a new record
+  const query = 'INSERT INTO Notifications SET ?';
   db.query(query, req.body, (err, results) => {
     if (err) {
       console.error('Error inserting data:', err);

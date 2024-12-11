@@ -1,12 +1,5 @@
 import express from 'express';
-import {
-  test,
-  getNotificationById,
-  getNotifications,
-  createNotification,
-  denyChallenge,
-  getDeniedChallenges,
-} from '../controllers/challengesController.js';
+import { test, getNotificationById, getNotifications, createNotification, denyChallenge, getDeniedChallenges } from '../controllers/challengesController.js';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger-config.js';

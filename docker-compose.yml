@@ -27,6 +27,7 @@ services:
     networks:
       - myeducational
       - mychallenges
+      - myusers
     ports:
       - "3010:3010"
     working_dir: /usr/src/app
