@@ -109,4 +109,3 @@ export async function createNotification(req, res) {
     res.status(201).json({ id: results.insertId });
   });
 }
-

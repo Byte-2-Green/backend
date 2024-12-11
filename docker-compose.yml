@@ -3,42 +3,23 @@ services:
     build: ./educational
     volumes:
       - ./educational/code:/usr/src/app
+      - educational-node-modules:/usr/src/app/node_modules 
     networks:
       - myeducational
     ports:
       - "${EDUCATIONAL_PORT}:${EDUCATIONAL_PORT}"
     working_dir: /usr/src/app
-    command: /bin/bash -c "npm install && npm run dev"
-    depends_on:
-      mysql-server-educational:
-        condition: service_healthy
+    command: /bin/bash -c "npm install && npm run dev" 
     environment:
       - EDUCATIONAL_DB_HOST=${EDUCATIONAL_DB_HOST}:${EDUCATIONAL_MYSQL_PORT}
       - EDUCATIONAL_DB_NAME=${EDUCATIONAL_DB_NAME}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-
-  challenges:
-    build: ./challenges
-    volumes:
-      - ./challenges/code:/usr/src/app
-    networks:
-      - mychallenges
-    ports:
-      - "${CHALLENGES_PORT}:${CHALLENGES_PORT}"
-    working_dir: /usr/src/app
-    command: /bin/bash -c "npm install && npm run dev"
     depends_on:
-      mysql-server-challenges:
+      mysql-server-educational:
         condition: service_healthy
-    environment:
-      - CHALLENGES_DB_HOST=${CHALLENGES_DB_HOST}:${CHALLENGES_MYSQL_PORT}
-      - CHALLENGES_DB_NAME=${CHALLENGES_DB_NAME}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
- 
+
   api-gateway:
     build: ./api-gateway
     volumes:
@@ -46,13 +27,14 @@ services:
     networks:
       - myeducational
       - mychallenges
+      - myusers
     ports:
       - "3010:3010"
     working_dir: /usr/src/app
-    command: /bin/bash -c "npm install && npm run dev"
+    command: npm run dev
     environment:
       - PORT=3010
- 
+
   mysql-server-educational:
     image: mysql:8.0
     networks:
@@ -73,7 +55,28 @@ services:
       retries: 5
       start_period: 10s
       timeout: 20s
- 
+
+  challenges:
+    build: ./challenges
+    volumes:
+      - ./challenges/code:/usr/src/app
+      - challenges-node-modules:/usr/src/app/node_modules 
+    networks:
+      - mychallenges
+    ports:
+      - "${CHALLENGES_PORT}:${CHALLENGES_PORT}"
+    working_dir: /usr/src/app
+    command: /bin/bash -c "npm install && npm run dev"  
+    environment:
+      - CHALLENGES_DB_HOST=${CHALLENGES_DB_HOST}:${CHALLENGES_MYSQL_PORT}
+      - CHALLENGES_DB_NAME=${CHALLENGES_DB_NAME}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      mysql-server-challenges:
+        condition: service_healthy
+
   mysql-server-challenges:
     image: mysql:8.0
     networks:
@@ -94,28 +97,74 @@ services:
       retries: 5
       start_period: 10s
       timeout: 20s
- 
+
+  users:
+    build: ./users
+    volumes:
+      - ./users/code:/usr/src/app
+      - users-node-modules:/usr/src/app/node_modules 
+    networks:
+      - myusers
+    ports:
+      - "${USERS_PORT}:${USERS_PORT}"
+    working_dir: /usr/src/app
+    command: /bin/bash -c "npm install && npm run dev"  
+    environment:
+      - USERS_DB_HOST=${USERS_DB_HOST}:${USERS_MYSQL_PORT}
+      - USERS_DB_NAME=${USERS_DB_NAME}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      mysql-server-users:
+        condition: service_healthy
+
+  mysql-server-users:
+    image: mysql:8.0
+    networks:
+      - myusers
+    environment:
+      - MYSQL_DATABASE=${USERS_DB_NAME}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "${USERS_MYSQL_PORT}:${MYSQL_PORT}"
+    volumes:
+      - ./users/mysql/initdb:/docker-entrypoint-initdb.d
+      - mysql-data-users:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 20s
+
   phpmyadmin:
     image: phpmyadmin:latest
     networks:
       - myeducational
       - mychallenges
+      - myusers
     environment:
-      - PMA_HOSTS=mysql-server-educational,mysql-server-challenges
+      - PMA_HOSTS=mysql-server-educational,mysql-server-challenges,mysql-server-users
       - PMA_USER=${MYSQL_USER}
       - PMA_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "8080:80"
-    depends_on:
-      - mysql-server-challenges
-      - mysql-server-educational
- 
+
 networks:
   myeducational:
     driver: bridge
   mychallenges:
     driver: bridge
- 
+  myusers:
+    driver: bridge
+
 volumes:
   mysql-data-educational:
   mysql-data-challenges:
+  mysql-data-users:
+  educational-node-modules: 
+  challenges-node-modules:  
+  users-node-modules: 
