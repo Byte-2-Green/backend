@@ -53,6 +53,37 @@ router.get('/denied-challenges', cors(), getDeniedChallenges);
 
 /**
  * @swagger
+ * /challenges/accept/{id}:
+ *   post:
+ *     summary: Accept a challenge
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the challenge to challenge
+ *     responses:
+ *       200:
+ *         description: Challenge accepted successfully
+ *       404:
+ *         description: Challenge not found
+ */
+router.post('/challenges/accept/:id', cors(), acceptChallenge);
+
+/**
+ * @swagger
+ * /accepted-challenges:
+ *   get:
+ *     summary: Get all accepted challenges
+ *     responses:
+ *       200:
+ *         description: A list of accepted challenges
+ */
+router.get('/accepted-challenges', cors(), getAcceptedChallenges);
+
+/**
+ * @swagger
  * /notifications:
  *   get:
  *     summary: Get all notifications
