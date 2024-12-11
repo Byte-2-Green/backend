@@ -1,16 +1,16 @@
 import mysql from 'mysql2';
 
 const db = mysql.createConnection({
-  host: 'mysql-server-challenges',  // Docker where MySQL is running 
-  user: 'user',       // MySQL user
-  password: 'userpassword', // MySQL password
-  database: 'challenges_db'  // Database name
+  host: 'mysql-server-challenges',
+  user: 'user',
+  password: 'userpassword',
+  database: 'challenges_db'
 });
 
 db.connect((err) => {
   if (err) {
     console.error('Could not connect to MySQL:', err);
-    process.exit(1); // Exit the app if DB connection fails
+    process.exit(1);
   }
   console.log('Connected to MySQL');
 });
