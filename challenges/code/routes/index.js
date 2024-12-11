@@ -1,13 +1,20 @@
 import express from 'express';
-import { test, getNotificationByChallengeId, getNotificationById, getNotifications, createNotification, denyChallenge, getDeniedChallenges } from '../controllers/challengesController.js';
+import {
+  test,
+  getNotificationById,
+  getNotifications,
+  createNotification,
+  denyChallenge,
+  getDeniedChallenges,
+} from '../controllers/challengesController.js';
 import cors from 'cors';
-import swaggerUi from "swagger-ui-express";
-import swaggerSpec from "./swagger-config.js";
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swagger-config.js';
 
 const router = express.Router();
 
 // Serve Swagger UI at /api-docs
-router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**
  * @swagger
@@ -23,23 +30,31 @@ router.get('/challenges', cors(), test);
 /**
  * @swagger
  * /challenges/deny/{id}:
- *  post:
- *   summary: Deny a challenge
- *  parameters:
- *   - in: path
- *    name: id
- *   required: true
+ *   post:
+ *     summary: Deny a challenge
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the challenge to deny
+ *     responses:
+ *       200:
+ *         description: Challenge denied successfully
+ *       404:
+ *         description: Challenge not found
  */
 router.post('/challenges/deny/:id', cors(), denyChallenge);
 
 /**
  * @swagger
  * /denied-challenges:
- *  get:
- *  summary: Get all denied challenges
- * responses:
- * 200:
- * description: A list of denied challenges
+ *   get:
+ *     summary: Get all denied challenges
+ *     responses:
+ *       200:
+ *         description: A list of denied challenges
  */
 router.get('/denied-challenges', cors(), getDeniedChallenges);
 
@@ -92,6 +107,9 @@ router.get('/notifications/:id', cors(), getNotificationById);
  *                 type: string
  *               challengeId:
  *                 type: string
+ *             required:
+ *               - title
+ *               - message
  *     responses:
  *       201:
  *         description: Notification created successfully
@@ -101,4 +119,3 @@ router.get('/notifications/:id', cors(), getNotificationById);
 router.post('/notifications', cors(), createNotification);
 
 export default router;
-
