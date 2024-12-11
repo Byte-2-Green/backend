@@ -105,7 +105,7 @@ export async function acceptChallenge(req, res) {
 /**
  * Insert the challenge into the AcceptedChallenges table
  */
-  const insertQuery = 'INSERT INTO AcceptedChallenge (Challenge_ID) VALUES (?)';
+  const insertQuery = 'INSERT INTO AcceptedChallenges (Challenge_ID) VALUES (?)';
   db.query(insertQuery, [id], (insertErr, insertResults) => {
     if (insertErr) {
       console.error('Error accepting challenge:', insertErr);
