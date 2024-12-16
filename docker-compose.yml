@@ -1,15 +1,15 @@
 services:
-  microservice:
-    container_name: educational
+  educational:
     build: ./educational
     volumes:
       - ./educational/code:/usr/src/app
+      - educational-node-modules:/usr/src/app/node_modules 
     networks:
-      - myeducational  
+      - myeducational
     ports:
       - "${EDUCATIONAL_PORT}:${EDUCATIONAL_PORT}"
     working_dir: /usr/src/app
-    command: bash -c "npm install && npm run dev"
+    command: /bin/bash -c "npm install && npm run dev" 
     environment:
       - EDUCATIONAL_DB_HOST=${EDUCATIONAL_DB_HOST}:${EDUCATIONAL_MYSQL_PORT}
       - EDUCATIONAL_DB_NAME=${EDUCATIONAL_DB_NAME}
@@ -17,32 +17,28 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     depends_on:
-      - mysql-server-educational
-    restart: always
+      mysql-server-educational:
+        condition: service_healthy
 
   api-gateway:
-    container_name: api-gateway
     build: ./api-gateway
     volumes:
       - ./api-gateway/code:/usr/src/app
     networks:
       - myeducational
       - mychallenges
+      - myusers
     ports:
       - "3010:3010"
     working_dir: /usr/src/app
-    command: bash -c "npm install && npm run dev"
+    command: npm run dev
     environment:
       - PORT=3010
-    depends_on:
-      - microservice # Wait for the microservice to be ready before starting the API Gateway
-      - mysql-server-educational # Wait for MySQL to be ready before starting the API Gateway
 
   mysql-server-educational:
-    container_name: mysql-server-educational
     image: mysql:8.0
     networks:
-      - myeducational  
+      - myeducational
     environment:
       - MYSQL_DATABASE=${EDUCATIONAL_DB_NAME}
       - MYSQL_USER=${MYSQL_USER}
@@ -51,20 +47,26 @@ services:
     ports:
       - "${EDUCATIONAL_MYSQL_PORT}:${MYSQL_PORT}"
     volumes:
-      - ./educational/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
+      - ./educational/mysql/initdb:/docker-entrypoint-initdb.d
       - mysql-data-educational:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 20s
 
-  microservice2:
-    container_name: challenges
+  challenges:
     build: ./challenges
     volumes:
       - ./challenges/code:/usr/src/app
+      - challenges-node-modules:/usr/src/app/node_modules 
     networks:
-      - mychallenges  
+      - mychallenges
     ports:
       - "${CHALLENGES_PORT}:${CHALLENGES_PORT}"
     working_dir: /usr/src/app
-    command: bash -c "npm install && npm run dev"
+    command: /bin/bash -c "npm install && npm run dev"  
     environment:
       - CHALLENGES_DB_HOST=${CHALLENGES_DB_HOST}:${CHALLENGES_MYSQL_PORT}
       - CHALLENGES_DB_NAME=${CHALLENGES_DB_NAME}
@@ -72,15 +74,13 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     depends_on:
-      - microservice
-      - mysql-server-challenges
-    restart: always
+      mysql-server-challenges:
+        condition: service_healthy
 
   mysql-server-challenges:
-    container_name: mysql-server-challenges
     image: mysql:8.0
     networks:
-      - mychallenges  
+      - mychallenges
     environment:
       - MYSQL_DATABASE=${CHALLENGES_DB_NAME}
       - MYSQL_USER=${MYSQL_USER}
@@ -89,17 +89,65 @@ services:
     ports:
       - "${CHALLENGES_MYSQL_PORT}:${MYSQL_PORT}"
     volumes:
-      - ./challenges/mysql/initdb:/docker-entrypoint-initdb.d  # Mount init SQL files
+      - ./challenges/mysql/initdb:/docker-entrypoint-initdb.d
       - mysql-data-challenges:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 20s
+
+  users:
+    build: ./users
+    volumes:
+      - ./users/code:/usr/src/app
+      - users-node-modules:/usr/src/app/node_modules 
+    networks:
+      - myusers
+    ports:
+      - "${USERS_PORT}:${USERS_PORT}"
+    working_dir: /usr/src/app
+    command: /bin/bash -c "npm install && npm run dev"  
+    environment:
+      - USERS_DB_HOST=${USERS_DB_HOST}:${USERS_MYSQL_PORT}
+      - USERS_DB_NAME=${USERS_DB_NAME}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      mysql-server-users:
+        condition: service_healthy
+
+  mysql-server-users:
+    image: mysql:8.0
+    networks:
+      - myusers
+    environment:
+      - MYSQL_DATABASE=${USERS_DB_NAME}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "${USERS_MYSQL_PORT}:${MYSQL_PORT}"
+    volumes:
+      - ./users/mysql/initdb:/docker-entrypoint-initdb.d
+      - mysql-data-users:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 20s
 
   phpmyadmin:
-    container_name: phpmyadmin
     image: phpmyadmin:latest
     networks:
       - myeducational
-      - mychallenges 
+      - mychallenges
+      - myusers
     environment:
-      - PMA_HOSTS=mysql-server-educational,mysql-server-challenges
+      - PMA_HOSTS=mysql-server-educational,mysql-server-challenges,mysql-server-users
       - PMA_USER=${MYSQL_USER}
       - PMA_PASSWORD=${MYSQL_PASSWORD}
     ports:
@@ -110,7 +158,13 @@ networks:
     driver: bridge
   mychallenges:
     driver: bridge
+  myusers:
+    driver: bridge
 
 volumes:
   mysql-data-educational:
   mysql-data-challenges:
+  mysql-data-users:
+  educational-node-modules: 
+  challenges-node-modules:  
+  users-node-modules: 
