@@ -1,6 +1,4 @@
-USE challenges_db;
-
-INSERT INTO `Challenges` (`Title`, `Description`, `Category`, `C02_emission`, `Timeframe`, `Icon`) VALUES
+INSERT INTO Challenges (Title, Description, Category, CO2_emission, Timeframe, Icon) VALUES
 ('Clean Photo Album', 'Delete 5 duplicate or unnecessary photos.', 'Photos & Videos', 5.00, 5, 'fa-solid fa-images'),
 ('Video Detox', 'Delete 3 old videos from your gallery.', 'Photos & Videos', 12.00, 7, 'fa-solid fa-film'),
 ('Inbox Zero', 'Delete 10 old emails taking up server space.', 'Emails', 1.00, 5, 'fa-solid fa-envelope'),
