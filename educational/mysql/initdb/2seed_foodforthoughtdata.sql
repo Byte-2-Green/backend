@@ -1,6 +1,4 @@
-USE educational_db;
-
-INSERT INTO `Food_for_Thought` (`Title`, `Description`, `Category`, `Icon`) VALUES
+INSERT INTO Food_for_Thought (Title, Description, Category, Icon) VALUES
 ('Streaming', 'If you stream video for one or two hours a day every year, the energy used is enough to power your fridge for half a year, contributing significantly to CO2 emissions.', 'Streaming', 'fas fa-video-slash'),
 ('Cryptocurrency Transactions', 'A single transaction using cryptocurrencies like Bitcoin emits approximately 402 kg of carbon dioxide, the same as the average household emits over three weeks.', 'Cryptocurrency', 'fa-brands fa-bitcoin'),
 ('Email', 'Sending 1 email with a large attachment (such as a video) can generate about 50 grams of CO2, the equivalent of driving a car for 200 meters.', 'Email', 'fas fa-car'),
@@ -10,5 +8,3 @@ INSERT INTO `Food_for_Thought` (`Title`, `Description`, `Category`, `Icon`) VALU
 ('Streaming Music', 'Streaming music for one hour generates about 55 grams of CO2 emissions, similar to the energy consumption of lighting an LED bulb for 1.5 hours.', 'Streaming', 'fa-regular fa-lightbulb'),
 ('Digital Advertising', 'Digital advertising is responsible for about 1% of global CO2 emissions, equivalent to the emissions of the airline industry.', 'Digital Advertising', 'fa-light fa-plane'),
 ('Cloud Storage', 'Storing data in the cloud for a year can emit the same CO2 as running a refrigerator for 2 months.', 'Cloud Storage', 'fas fa-database');
-
-
