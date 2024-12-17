@@ -1,7 +1,4 @@
-USE challenges_db;
-
-INSERT INTO `Notifications` (`Title`, `Description`)
-VALUES
+INSERT INTO Notifications (Title, Description) VALUES
     ('Welcome Notification', 'This is the first notification for Challenge 1.'),
     ('Reminder Notification', 'Do not forget to complete Challenge 2 before the deadline!'),
     ('Congratulations Notification', 'You have successfully completed Challenge 3!'),
