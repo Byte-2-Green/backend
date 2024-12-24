@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllStatistics, getStatsByUserId, getStatsById } from '../controllers/UserController.js';
+import { getAllStatistics, getStatsByUserId, getStatsById, updateStatisticsFromChallenges } from '../controllers/UserController.js';
 import swaggerUi from "swagger-ui-express";
 import { checkIfWork } from '../middleware/UserMiddelware.js';
 import swaggerSpec from "./swagger-config.js";
@@ -54,5 +54,25 @@ router.get('/stats/user/:userId', getStatsByUserId);
  * required: true
  */
 router.get('/stats/:statId', getStatsById);
+
+/**
+ * @swagger
+ * /stats/update/{userId}:
+ *   post:
+ *     summary: Update user statistics based on accepted challenges
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user
+ *     responses:
+ *       200:
+ *         description: Statistics updated successfully
+ *       500:
+ *         description: Internal server error
+ */
+router.post('/stats/update/:userId', updateStatisticsFromChallenges);
 
 export default router;
