@@ -150,3 +150,41 @@ export const deleteStatistics = (req, res) => {
     res.json({ message: 'Statistics deleted successfully' });
   });
 };
+
+// Connecting the statistics with the challenges and updating the table
+export const updateStatisticsFromChallenges = (req, res) => {
+  const userId = req.params.userId;
+
+  const query = `
+    SELECT c.Title, c.C02_emission
+    FROM challenges_db.AcceptedChallenges ac
+    JOIN challenges_db.Challenges c ON ac.Challenge_ID = c.Challenge_ID
+    WHERE ac.id IN (
+      SELECT id
+      FROM challenges_db.AcceptedChallenges
+    )
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching accepted challenges:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    let totalCO2Saved = results.reduce((sum, challenge) => sum + challenge.C02_emission, 0);
+
+    const updateQuery = `
+      INSERT INTO users_db.Statistics (Stat_name, Stat_value, User_ID)
+      VALUES (?, ?, ?)
+      ON DUPLICATE KEY UPDATE Stat_value = Stat_value + VALUES(Stat_value)
+    `;
+    db.query(updateQuery, ['CO2 Saved', totalCO2Saved, userId], (updateErr) => {
+      if (updateErr) {
+        console.error('Error updating statistics:', updateErr);
+        return res.status(500).json({ error: 'Error updating statistics' });
+      }
+
+      res.status(200).json({ message: 'Statistics updated successfully!' });
+    });
+  });
+};

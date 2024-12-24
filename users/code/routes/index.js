@@ -1,4 +1,3 @@
-
 import express from 'express';
 import { getAllStatistics, getStatsByUserId, getStatsById } from '../controllers/UserController.js';
 import swaggerUi from "swagger-ui-express";
