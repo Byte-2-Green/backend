@@ -1,6 +1,5 @@
-
 import express from 'express';
-import { getAllUsers, getUserById, createUser, updateTotalCo2 } from '../controllers/UserController.js';
+import { getAllUsers, getUserById, createUser, updateTotalCo2, getAllStatistics, getStatsByUserId, getStatsById, updateStatisticsFromChallenges } from '../controllers/UserController.js';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger-config.js";
 import cors from 'cors';
@@ -167,5 +166,25 @@ router.post('/users', createUser);
  *               $ref: '#/components/schemas/Error'
  */
 router.put('/users/:id/co2saved', updateTotalCo2);
+
+/**
+ * @swagger
+ * /stats/update/{userId}:
+ *   post:
+ *     summary: Update user statistics based on accepted challenges
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user
+ *     responses:
+ *       200:
+ *         description: Statistics updated successfully
+ *       500:
+ *         description: Internal server error
+ */
+router.post('/stats/update/:userId', updateStatisticsFromChallenges);
 
 export default router;
