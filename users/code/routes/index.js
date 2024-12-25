@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllStatistics, getStatsByUserId, getStatsById, updateStatisticsFromChallenges } from '../controllers/UserController.js';
+import { getAllStatistics, getStatsByUserId, getStatsById, updateWeeklyStatistics, updateYearlyStatistics } from '../controllers/UserController.js';
 import swaggerUi from "swagger-ui-express";
 import { checkIfWork } from '../middleware/UserMiddelware.js';
 import swaggerSpec from "./swagger-config.js";
@@ -13,8 +13,6 @@ router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Enable CORS
 router.use(cors());
-
-
 
 /**
  * @swagger
@@ -57,9 +55,9 @@ router.get('/stats/:statId', getStatsById);
 
 /**
  * @swagger
- * /stats/update/{userId}:
+ * /stats/weekly/{userId}:
  *   post:
- *     summary: Update user statistics based on accepted challenges
+ *     summary: Update weekly statistics based on accepted challenges
  *     parameters:
  *       - in: path
  *         name: userId
@@ -69,10 +67,30 @@ router.get('/stats/:statId', getStatsById);
  *         description: The ID of the user
  *     responses:
  *       200:
- *         description: Statistics updated successfully
+ *         description: Weekly statistics updated successfully
  *       500:
  *         description: Internal server error
  */
-router.post('/stats/update/:userId', updateStatisticsFromChallenges);
+router.post('/stats/weekly/:userId', updateWeeklyStatistics);
+
+/**
+ * @swagger
+ * /stats/yearly/{userId}:
+ *   post:
+ *     summary: Update yearly statistics based on weekly statistics
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user
+ *     responses:
+ *       200:
+ *         description: Yearly statistics updated successfully
+ *       500:
+ *         description: Internal server error
+ */
+router.post('/stats/yearly/:userId', updateYearlyStatistics);
 
 export default router;
