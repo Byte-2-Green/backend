@@ -7,5 +7,7 @@ CREATE TABLE Users (
     Full_name VARCHAR(255) NOT NULL,
     Username VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
-    Password_hash VARCHAR(255) NOT NULL
+    Password_hash VARCHAR(255) NOT NULL,
+    Total_Co2_saved FLOAT NOT NULL DEFAULT 0,
+    Created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
