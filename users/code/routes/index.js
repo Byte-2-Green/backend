@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, createUser, updateTotalCo2, getAllStatistics, getStatsByUserId, getStatsById, updateStatisticsFromChallenges } from '../controllers/UserController.js';
+import { getAllUsers, getUserById, createUser, updateTotalCo2, updateStatisticsFromChallenges } from '../controllers/UserController.js';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger-config.js";
 import cors from 'cors';
