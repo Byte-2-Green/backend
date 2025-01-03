@@ -202,11 +202,15 @@ networks:
     driver: bridge
   myusers:
     driver: bridge
+  mygallery:
+    driver: bridge
 
 volumes:
   mysql-data-educational:
   mysql-data-challenges:
   mysql-data-users:
+  mysql-data-gallery:
   educational-node-modules: 
   challenges-node-modules:  
   users-node-modules: 
+  gallery-node-modules: 
