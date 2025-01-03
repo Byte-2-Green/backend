@@ -188,8 +188,9 @@ services:
       - myeducational
       - mychallenges
       - myusers
+      - mygallery
     environment:
-      - PMA_HOSTS=mysql-server-educational,mysql-server-challenges,mysql-server-users
+      - PMA_HOSTS=mysql-server-educational,mysql-server-challenges,mysql-server-users,mysql-server-gallery
       - PMA_USER=${MYSQL_USER}
       - PMA_PASSWORD=${MYSQL_PASSWORD}
     ports:

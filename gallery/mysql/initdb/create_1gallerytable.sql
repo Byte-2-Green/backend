@@ -3,7 +3,9 @@ CREATE DATABASE IF NOT EXISTS gallery_db;
 USE gallery_db;
 
 CREATE TABLE Gallery (
-    Gallery_id SERIAL PRIMARY KEY,
+    gallery_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id UUID NOT NULL,
+    unlocked_frames INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

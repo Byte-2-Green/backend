@@ -3,10 +3,11 @@ CREATE DATABASE IF NOT EXISTS gallery_db;
 USE gallery_db;
 
 CREATE TABLE Art (
-    Art_id SERIAL PRIMARY KEY,
-    Gallery_id INT REFERENCES gallery(id) ON DELETE CASCADE,
-    Artist VARCHAR(255),
-    Image_url VARCHAR(500),
+    art_id INT AUTO_INCREMENT PRIMARY KEY,
+    gallery_id INT REFERENCES gallery(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL,
+    image_url VARCHAR(500) NOT NULL,
+    placeholder_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
