@@ -1,7 +1,7 @@
 import db from '../db.js';  // Import the MySQL connection
 const axios = require('axios');
 
-  exports.getArtByUser = async (req, res) => {
+export async function getArtByUser (req, res) {
     try {
       // Assuming you have the user microservice's URL
       const userId = req.params.id;
@@ -28,7 +28,7 @@ const axios = require('axios');
   };
 
 // Get all galleries
-exports.getAllGalleries = async (req, res) => {
+export async function getAllGalleries (req, res) {
     const query = 'SELECT * FROM Gallery';
     db.query(query, (err, results) => {
       if (err) {
@@ -40,7 +40,7 @@ exports.getAllGalleries = async (req, res) => {
   };
   
   // Get all art by a specific user
-  exports.getArtByUser = async (req, res) => {
+export async function getArtByUser (req, res) {
     const userId = req.params.id;
     const query = 'SELECT * FROM Art WHERE user_id = ?';
     db.query(query, [userId], (err, results) => {
@@ -53,7 +53,7 @@ exports.getAllGalleries = async (req, res) => {
   };
   
   // Get all placeholders
-  exports.getAllPlaceholders = async (req, res) => {
+export async function getAllPlaceholders (req, res) {
     const query = 'SELECT * FROM Placeholders';
     db.query(query, (err, results) => {
       if (err) {
@@ -65,7 +65,7 @@ exports.getAllGalleries = async (req, res) => {
   };
   
   // Get a specific gallery by id
-  exports.getGallery = async (req, res) => {
+  export async function getGallery (req, res) {
     const galleryId = req.params.id;
     const query = 'SELECT * FROM Gallery WHERE gallery_id = ?';  // SQL query to fetch a gallery by id
     db.query(query, [galleryId], async (err, results) => {
@@ -101,7 +101,7 @@ exports.getAllGalleries = async (req, res) => {
   };
   
   // Get a specific piece of art by id
-  exports.getArt = async (req, res) => {
+  export async function getArt (req, res) {
     const artId = req.params.id;
     const query = 'SELECT * FROM Art WHERE art_id = ?';
     db.query(query, [artId], (err, results) => {
@@ -117,7 +117,7 @@ exports.getAllGalleries = async (req, res) => {
   };
   
   // Get a specific placeholder by id
-  exports.getPlaceholder = async (req, res) => {
+  export async function getPlaceholder (req, res) {
     const placeholderId = req.params.id;
     const query = 'SELECT * FROM Placeholders WHERE placeholder_id = ?';
     db.query(query, [placeholderId], (err, results) => {
@@ -133,7 +133,7 @@ exports.getAllGalleries = async (req, res) => {
   };
   
   // Update art by id
-  exports.updateArt = async (req, res) => {
+  export async function updateArt (req, res) {
     const artId = req.params.id;
     const { imageUrl, userId, galleryId, placeholderId } = req.body;
     const query = 'UPDATE Art SET image_url = ?, user_id = ?, gallery_id = ?, placeholder_id = ? WHERE art_id = ?';
@@ -150,7 +150,7 @@ exports.getAllGalleries = async (req, res) => {
   };
   
   // Delete art by id
-  exports.deleteArt = async (req, res) => {
+export async function deleteArt (req, res) {
     const artId = req.params.id;
     const query = 'DELETE FROM Art WHERE art_id = ?';
     db.query(query, [artId], (err, results) => {

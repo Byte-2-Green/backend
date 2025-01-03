@@ -1,5 +1,6 @@
 
 import express from 'express';
+import { getAllGalleries, getAllPlaceholders, getArt, getArtByUser, getGallery, getPlaceholder, updateArt, deleteArt } from '../controllers/GalleryController.js';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger-config.js";
 import cors from 'cors';
