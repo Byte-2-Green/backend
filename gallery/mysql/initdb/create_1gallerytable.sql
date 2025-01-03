@@ -1,0 +1,11 @@
+CREATE DATABASE IF NOT EXISTS gallery_db;
+
+USE gallery_db;
+
+CREATE TABLE Users (
+    User_id INT AUTO_INCREMENT PRIMARY KEY,
+    Full_name VARCHAR(255) NOT NULL,
+    Username VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    Password_hash VARCHAR(255) NOT NULL
+);
