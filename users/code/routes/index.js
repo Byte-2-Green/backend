@@ -1,8 +1,7 @@
 
 import express from 'express';
-import { getAllStatistics, getStatsByUserId, getStatsById } from '../controllers/UserController.js';
+import { getAllStatistics, getStatsByUserId, getStatsById, getUserById} from '../controllers/UserController.js';
 import swaggerUi from "swagger-ui-express";
-import { checkIfWork } from '../middleware/UserMiddelware.js';
 import swaggerSpec from "./swagger-config.js";
 import cors from 'cors';
 
@@ -55,5 +54,7 @@ router.get('/stats/user/:userId', getStatsByUserId);
  * required: true
  */
 router.get('/stats/:statId', getStatsById);
+
+router.get('/user/:userId', cors(), getUserById);
 
 export default router;

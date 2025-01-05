@@ -46,6 +46,6 @@ router.use('/challenges', cors(), challengeProxy);
 
 router.use('/users', cors(), userProxy);
 
-router.use('/gallery', cors(), userProxy);
+router.use('/gallery', cors(), galleryProxy);
 
 export default router;

@@ -2,7 +2,7 @@ import db from '../db.js';  // Import the MySQL connection
 
 // Get a user by ID
 export const getUserById = (req, res) => {
-  const id = req.params.id;
+  const id = req.params.userId;
   db.query('SELECT * FROM Users WHERE User_id = ?', [id], (err, result) => {
     if (err) {
       console.error('Error executing query:', err);
