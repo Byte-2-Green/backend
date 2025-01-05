@@ -1,5 +1,5 @@
 import db from '../db.js';  // Import the MySQL connection
-const axios = require('axios');
+import axios from 'module';
 
 export async function getArtByUser (req, res) {
     try {
@@ -33,19 +33,6 @@ export async function getAllGalleries (req, res) {
     db.query(query, (err, results) => {
       if (err) {
         console.error('Error fetching galleries:', err);
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
-      res.status(200).json(results);
-    });
-  };
-  
-  // Get all art by a specific user
-export async function getArtByUser (req, res) {
-    const userId = req.params.id;
-    const query = 'SELECT * FROM Art WHERE user_id = ?';
-    db.query(query, [userId], (err, results) => {
-      if (err) {
-        console.error('Error fetching art by user:', err);
         return res.status(500).json({ error: 'Internal Server Error' });
       }
       res.status(200).json(results);
