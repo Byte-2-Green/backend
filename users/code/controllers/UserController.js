@@ -1,192 +1,126 @@
 import db from '../db.js';
 
-// Get a user by ID
-export const getUserById = (req, res) => {
-  const id = req.params.id;
-  db.query('SELECT * FROM Users WHERE User_id = ?', [id], (err, result) => {
+/**
+ * Get all users
+ */
+export async function getAllUsers(req, res) {
+  const query = 'SELECT * FROM Users'; 
+  db.query(query, (err, results) => {
     if (err) {
-      console.error('Error executing query:', err);
-      res.status(500).send('Error executing query');
-      return;
+      console.error('Error fetching users:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
-    res.json(result);
-  });
-};
-
-// Add a new user
-export const addUser = (req, res) => {
-  const { full_name, username, email, password_hash } = req.body;
-  db.query(
-    'INSERT INTO Users (Full_name, Username, Email, Password_hash) VALUES (?, ?, ?, ?)',
-    [full_name, username, email, password_hash],
-    (err, result) => {
-      if (err) {
-        console.error('Error executing query:', err);
-        res.status(500).send('Error executing query');
-        return;
-      }
-      res.status(201).json({ message: 'User added successfully', userId: result.insertId });
-    }
-  );
-};
-
-// Update a user
-export const updateUser = (req, res) => {
-  const id = req.params.id;
-  const { full_name, username, email, password_hash } = req.body;
-  db.query(
-    'UPDATE Users SET Full_name = ?, Username = ?, Email = ?, Password_hash = ? WHERE User_id = ?',
-    [full_name, username, email, password_hash, id],
-    (err, result) => {
-      if (err) {
-        console.error('Error executing query:', err);
-        res.status(500).send('Error executing query');
-        return;
-      }
-      res.json({ message: 'User updated successfully' });
-    }
-  );
-};
-
-// Delete a user
-export const deleteUser = (req, res) => {
-  const id = req.params.id;
-  db.query('DELETE FROM Users WHERE User_id = ?', [id], (err, result) => {
-    if (err) {
-      console.error('Error executing query:', err);
-      res.status(500).send('Error executing query');
-      return;
-    }
-    res.json({ message: 'User deleted successfully' });
-  });
-};
-
-//Get all statistics
-export const getAllStatistics = (req, res) => {
-  db.query('SELECT * FROM Statistics', (err, result) => {
-    if (err) {
-      console.error('Error executing query:', err);
-      res.status(500).send('Error executing query');
-      return;
-    }
-    res.json(result);
+    res.status(200).json(results);
   });
 }
 
-// Get statistics by ID
-export const getStatsById = (req, res) => {
-  const statId = req.params.statId;
-  db.query('SELECT * FROM Statistics WHERE Stat_ID = ?', [statId], (err, result) => {
+/**
+ * Get user by ID
+ */
+export async function getUserById(req, res) {
+  const query = 'SELECT * FROM Users WHERE User_id = ?'; 
+  const { id } = req.params;
+
+  db.query(query, [id], (err, results) => {
     if (err) {
-      console.error('Error executing query:', err);
-      res.status(500).send('Error executing query');
-      return;
-    }
-    res.json(result);
-  });
-}
-
-// Get statistics by user ID
-export const getStatsByUserId = (req, res) => {
-  const userId = req.params.userId;
-  db.query(
-    'SELECT * FROM Statistics WHERE User_ID = ?',
-    [userId],
-    (err, result) => {
-      if (err) {
-        console.error('Error executing query:', err);
-        res.status(500).send('Error executing query');
-        return;
-      }
-      res.json(result);
-    }
-  );
-};
-
-// Add new statistics
-export const addStatistics = (req, res) => {
-  const { stat_name, stat_value, user_id } = req.body;
-  db.query(
-    'INSERT INTO Statistics (Stat_name, Stat_value, User_ID) VALUES (?, ?, ?)',
-    [stat_name, stat_value, user_id],
-    (err, result) => {
-      if (err) {
-        console.error('Error executing query:', err);
-        res.status(500).send('Error executing query');
-        return;
-      }
-      res.status(201).json({ message: 'Statistics added successfully', statId: result.insertId });
-    }
-  );
-};
-
-// Update statistics
-export const updateStatistics = (req, res) => {
-  const statId = req.params.statId;
-  const { stat_name, stat_value } = req.body;
-  db.query(
-    'UPDATE Statistics SET Stat_name = ?, Stat_value = ? WHERE Stat_ID = ?',
-    [stat_name, stat_value, statId],
-    (err, result) => {
-      if (err) {
-        console.error('Error executing query:', err);
-        res.status(500).send('Error executing query');
-        return;
-      }
-      res.json({ message: 'Statistics updated successfully' });
-    }
-  );
-};
-
-// Delete statistics
-export const deleteStatistics = (req, res) => {
-  const statId = req.params.statId;
-  db.query('DELETE FROM Statistics WHERE Stat_ID = ?', [statId], (err, result) => {
-    if (err) {
-      console.error('Error executing query:', err);
-      res.status(500).send('Error executing query');
-      return;
-    }
-    res.json({ message: 'Statistics deleted successfully' });
-  });
-};
-
-// Update weekly statistics
-export const updateWeeklyStatistics = (req, res) => {
-  const userId = req.params.userId;
-
-  const query = `
-    SELECT c.C02_emission, ac.accepted_at
-    FROM challenges_db.AcceptedChallenges ac
-    JOIN challenges_db.Challenges c ON ac.Challenge_ID = c.Challenge_ID
-    WHERE ac.User_ID = ? AND ac.accepted_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-  `;
-
-  db.query(query, [userId], (err, results) => {
-    if (err) {
-      console.error('Error fetching weekly data:', err);
+      console.error('Error fetching user:', err);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 
-    const totalCO2 = results.reduce((sum, challenge) => sum + challenge.C02_emission, 0);
-    const startOfWeek = new Date();
-    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-    const endOfWeek = new Date();
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    res.status(200).json(results[0]);
+  });
+}
 
-    const insertQuery = `
-      INSERT INTO WeeklyStatistics (User_ID, Week_Start, Week_End, Total_CO2)
-      VALUES (?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE Total_CO2 = VALUES(Total_CO2)
-    `;
-    db.query(insertQuery, [userId, startOfWeek, endOfWeek, totalCO2], (insertErr) => {
-      if (insertErr) {
-        console.error('Error inserting weekly statistics:', insertErr);
-        return res.status(500).json({ error: 'Failed to save weekly statistics' });
+/**
+ * Update Total_Co2_saved for a user
+ */
+export async function updateTotalCo2(req, res) {
+  const selectQuery = 'SELECT Total_Co2_saved FROM Users WHERE User_id = ?'; 
+  const updateQuery = 'UPDATE Users SET Total_Co2_saved = ? WHERE User_id = ?'; 
+
+  const { id } = req.params;
+  const { co2ToAdd } = req.body;
+
+  if (typeof co2ToAdd !== 'number' || co2ToAdd < 0) {
+    return res.status(400).json({ error: 'Invalid CO2 value' });
+  }
+
+  db.query(selectQuery, [id], (err, results) => {
+    if (err) {
+      console.error('Error fetching user:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const newTotal = results[0].Total_Co2_saved + co2ToAdd;
+
+    db.query(updateQuery, [newTotal, id], (updateErr) => {
+      if (updateErr) {
+        console.error('Error updating Total_Co2_saved:', updateErr);
+        return res.status(500).json({ error: 'Internal Server Error' });
       }
-      res.status(200).json({ message: 'Weekly statistics updated successfully!' });
+
+      res.status(200).json({ message: 'Total CO2 saved updated successfully', newTotal });
     });
+  });
+}
+
+/**
+ * Create a new user
+ */
+export async function createUser(req, res) {
+  const query = `
+    INSERT INTO Users (Full_name, Username, Email, Password_hash)
+    VALUES (?, ?, ?, ?)
+  `; 
+  const { fullName, username, email, passwordHash } = req.body;
+
+  db.query(query, [fullName, username, email, passwordHash], (err) => {
+    if (err) {
+      console.error('Error creating user:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    res.status(201).json({ message: 'User created successfully' });
+  });
+}
+
+// Update weekly statistics
+export const saveWeeklyStatistics = (req, res) => {
+  const userId = req.params.userId;
+  const { totalCO2 } = req.body;
+
+  if (typeof totalCO2 !== 'number' || totalCO2 < 0) {
+    return res.status(400).json({ error: 'Invalid CO2 value' });
+  }
+
+  const startOfWeek = new Date();
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(endOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  const insertQuery = `
+    INSERT INTO WeeklyStatistics (User_ID, Week_Start, Week_End, Total_CO2)
+    VALUES (?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE Total_CO2 = VALUES(Total_CO2)
+  `;
+
+  db.query(insertQuery, [userId, startOfWeek, endOfWeek, totalCO2], (err) => {
+    if (err) {
+      console.error('Error saving weekly statistics:', err);
+      return res.status(500).json({ error: 'Failed to save weekly statistics' });
+    }
+    res.status(200).json({ message: 'Weekly statistics saved successfully!' });
   });
 };
 
