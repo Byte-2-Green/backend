@@ -92,7 +92,7 @@ export async function createUser(req, res) {
   });
 }
 
-// Update weekly statistics
+// Save weekly statistics
 export const saveWeeklyStatistics = (req, res) => {
   const userId = req.params.userId;
   const { totalCO2 } = req.body;
