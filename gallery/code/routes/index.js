@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { getAllGalleries, getAllPlaceholders, getArt, getArtByUser, getGallery, getPlaceholder, updateArt, deleteArt } from '../controllers/GalleryController.js';
+import { addNewArt, getAllGalleries, getAllPlaceholders, getArt, getArtByUser, getGallery, getPlaceholder, updateArt, deleteArt } from '../controllers/GalleryController.js';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger-config.js";
 import cors from 'cors';
@@ -20,6 +20,7 @@ router.get('/user/:id/art', cors(), getArtByUser);
 router.get('/placeholders', cors(), getAllPlaceholders);
 
 // Logic for the actual app
+router.post('/gallery/:galleryId/user/:userId/art', cors(), addNewArt);
 router.get('/gallery/:id', cors(), getGallery);
 router.get('/art/:id', cors(), getArt);
 router.get('/placeholder/:id', cors(), getPlaceholder);
