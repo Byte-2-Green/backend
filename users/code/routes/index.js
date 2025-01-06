@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, createUser, updateTotalCo2, saveWeeklyStatistics, updateYearlyStatistics } from '../controllers/UserController.js';
+import { getAllUsers, getUserById, createUser, updateTotalCo2, saveWeeklyStatistics, updateYearlyStatistics, getCo2Saved, getTotalCo2Saved } from '../controllers/UserController.js';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger-config.js";
 import cors from 'cors';
@@ -166,6 +166,53 @@ router.post('/users', createUser);
  *               $ref: '#/components/schemas/Error'
  */
 router.put('/users/:id/co2saved', updateTotalCo2);
+
+/**
+ * @swagger
+ * /users/{id}/co2saved:
+ * get:
+ * summary: Get CO2 saved by user
+ * description: Retrieve the total CO2 saved by a user
+ * parameters:
+ * - in: path
+ * name: id
+ * required: true
+ * description: The ID of the user
+ * schema:
+ * type: integer
+ * responses:
+ * 200:
+ * description: The total CO2 saved by the user
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * co2Saved:
+ * type: number
+ * description: The total CO2 saved by the user
+ */
+router.get('/users/:id/co2saved', getCo2Saved);
+
+/**
+ * @swagger
+ * /users/co2saved:
+ *  get:
+ *   summary: Get total CO2 saved by all users combined
+ *  description: Retrieve the total CO2 saved by all users combined
+ * responses:
+ * 200:
+ * description: The total CO2 saved by all users combined
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * totalCO2:
+ * type: number
+ * description: The total CO2 saved by all users combined
+ */
+router.get('/users/co2saved', getTotalCo2Saved);
 
 /**
  * @swagger

@@ -73,6 +73,43 @@ export async function updateTotalCo2(req, res) {
 }
 
 /**
+ * get co2 saved by user
+  */
+export async function getCo2Saved(req, res) {
+  const query = 'SELECT Total_Co2_saved FROM Users WHERE User_id = ?'; 
+  const { id } = req.params;
+
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error fetching user:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json(results[0]);
+  });
+}
+
+/**
+ * get total co2 saved counted up of all users
+ */
+export async function getTotalCo2Saved(req, res) {
+  const query = 'SELECT SUM(Total_Co2_saved) AS Total_Co2_saved FROM Users'; 
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching users:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    res.status(200).json(results[0]);
+  });
+}
+
+/**
  * Create a new user
  */
 export async function createUser(req, res) {
