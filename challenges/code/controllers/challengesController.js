@@ -19,18 +19,12 @@ export async function test(req, res) {
  */
 export async function denyChallenge(req, res) {
   const { id } = req.params;
-
-  /**
- * Validate entrypoint
- */
+  const user_id = 1; // Default user_id for testing; replace with session user ID later
 
   if (!id) {
-    return res.status(400).json({ error: 'Challenge ID are required.' });
+    return res.status(400).json({ error: 'Challenge ID is required.' });
   }
 
-  /**
- * Verify if the Id exists in the database
- */
   const checkQuery = 'SELECT * FROM Challenges WHERE Challenge_ID = ?';
   db.query(checkQuery, [id], (checkErr, checkResults) => {
     if (checkErr) {
@@ -42,19 +36,18 @@ export async function denyChallenge(req, res) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
 
-/**
- * Insert the challenge into the DeniedChallenges table
- */
-  const insertQuery = 'INSERT INTO DeniedChallenges (Challenge_ID) VALUES (?)';
-  db.query(insertQuery, [id], (insertErr, insertResults) => {
-    if (insertErr) {
-      console.error('Error denying challenge:', insertErr);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+    const insertQuery =
+      'INSERT INTO DeniedChallenges (user_id, Challenge_ID) VALUES (?, ?)';
+    db.query(insertQuery, [user_id, id], (insertErr) => {
+      if (insertErr) {
+        console.error('Error denying challenge:', insertErr);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
       res.status(201).json({ message: 'Challenge denied successfully.' });
     });
   });
 }
+
 
 /**
  * Get the DeniedChallenges
@@ -66,31 +59,25 @@ export async function getDeniedChallenges(req, res) {
       JOIN Challenges ON DeniedChallenges.Challenge_ID = Challenges.Challenge_ID
   `;
   db.query(query, (err, results) => {
-      if (err) {
-          console.error('Error fetching denied challenges:', err);
-          return res.status(500).json({ error: 'Internal Server Error' });
-      }
-      res.status(200).json(results);
-    });
-  }
+    if (err) {
+      console.error('Error fetching denied challenges:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    res.status(200).json(results);
+  });
+}
 
 /**
  * Accept a challenge
  */
 export async function acceptChallenge(req, res) {
   const { id } = req.params;
-
-  /**
- * Validate entrypoint
- */
+  const user_id = 1; // Default user_id for testing
 
   if (!id) {
-    return res.status(400).json({ error: 'Challenge ID are required.' });
+    return res.status(400).json({ error: 'Challenge ID is required.' });
   }
 
-  /**
- * Verify if the Id exists in the database
- */
   const checkQuery = 'SELECT * FROM Challenges WHERE Challenge_ID = ?';
   db.query(checkQuery, [id], (checkErr, checkResults) => {
     if (checkErr) {
@@ -102,22 +89,22 @@ export async function acceptChallenge(req, res) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
 
-/**
- * Insert the challenge into the AcceptedChallenges table
- */
-  const insertQuery = 'INSERT INTO AcceptedChallenges (Challenge_ID) VALUES (?)';
-  db.query(insertQuery, [id], (insertErr, insertResults) => {
-    if (insertErr) {
-      console.error('Error accepting challenge:', insertErr);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+    const insertQuery =
+      'INSERT INTO AcceptedChallenges (user_id, Challenge_ID) VALUES (?, ?)';
+    db.query(insertQuery, [user_id, id], (insertErr) => {
+      if (insertErr) {
+        console.error('Error accepting challenge:', insertErr);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
       res.status(201).json({ message: 'Challenge accepted successfully.' });
     });
   });
 }
 
+
 /**
  * Get the AcceptedChallenges
+ * TODO: logic for getting accepted challenges is wrong
  */
 export async function getAcceptedChallenges(req, res) {
   const query = `
@@ -126,13 +113,13 @@ export async function getAcceptedChallenges(req, res) {
       JOIN Challenges ON AcceptedChallenges.Challenge_ID = Challenges.Challenge_ID
   `;
   db.query(query, (err, results) => {
-      if (err) {
-          console.error('Error fetching accepted challenges:', err);
-          return res.status(500).json({ error: 'Internal Server Error' });
-      }
-      res.status(200).json(results);
-    });
-  }
+    if (err) {
+      console.error('Error fetching accepted challenges:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    res.status(200).json(results);
+  });
+}
 
 // Get all notifications 
 export async function getNotifications(req, res) {
