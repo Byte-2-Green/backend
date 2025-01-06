@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, createUser, updateTotalCo2, saveWeeklyStatistics, updateYearlyStatistics, getCo2Saved, getTotalCo2Saved } from '../controllers/UserController.js';
+import { getAllUsers, getUserById, createUser, updateTotalCo2, saveWeeklyStatistics, updateYearlyStatistics, getCo2Saved, getTotalCo2Saved, login } from '../controllers/UserController.js';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger-config.js";
 import cors from 'cors';
@@ -30,12 +30,36 @@ router.use(cors());
  *                 $ref: '#/components/schemas/User'
  *       500:
  *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  */
 router.get('/users', getAllUsers);
+
+/**
+ * @swagger
+ * /users/login:
+ *  post:
+ *   summary: Login
+ *  description: Login a user
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * email:
+ * type: string
+ * description: The user's email
+ * password:
+ * type: string
+ * description: The user's password
+ * required:
+ * - email
+ * - password
+ * responses:
+ * 200:
+ * description: User logged in successfully
+ */
+router.post('/login', login);
 
 /**
  * @swagger
@@ -53,22 +77,10 @@ router.get('/users', getAllUsers);
  *     responses:
  *       200:
  *         description: The user with the specified ID
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
  *       404:
  *         description: User not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  */
 router.get('/users/:id', getUserById);
 
@@ -80,29 +92,13 @@ router.get('/users/:id', getUserById);
  *     description: Create a new user with the specified details
  *     requestBody:
  *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/User'
  *     responses:
  *       201:
  *         description: User created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Invalid user details
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  */
 router.post('/users', createUser);
 
@@ -148,22 +144,10 @@ router.post('/users', createUser);
  *                 - newTotal
  *       400:
  *         description: Invalid CO2 value
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: User not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  */
 router.put('/users/:id/co2saved', updateTotalCo2);
 

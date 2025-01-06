@@ -129,6 +129,25 @@ export async function createUser(req, res) {
   });
 }
 
+// login 
+export async function login(req, res) {
+  const query = 'SELECT * FROM Users WHERE Email = ? AND Password_hash = ?'; 
+  const { email, passwordHash } = req.body;
+
+  db.query(query, [email, passwordHash], (err, results) => {
+    if (err) {
+      console.error('Error logging in:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    res.status(200).json(results[0]);
+  });
+}
+
 // Save weekly statistics
 export const saveWeeklyStatistics = (req, res) => {
   const userId = req.params.userId;
