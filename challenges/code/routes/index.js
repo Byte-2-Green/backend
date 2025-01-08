@@ -1,5 +1,5 @@
 import express from 'express';
-import { test, getNotificationById, getNotifications, createNotification, denyChallenge, getDeniedChallenges, acceptChallenge, getAcceptedChallenges } from '../controllers/challengesController.js';
+import { test, getNotificationById, saveFeedback, getNotifications, createNotification, denyChallenge, getDeniedChallenges, acceptChallenge, getAcceptedChallenges } from '../controllers/challengesController.js';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger-config.js';
@@ -141,5 +141,38 @@ router.get('/notifications/:id', cors(), getNotificationById);
  *         description: Invalid input
  */
 router.post('/notifications', cors(), createNotification);
+
+/**
+ * @swagger
+ * /challenges/feedback:
+ *   post:
+ *     summary: Save user feedback for a completed challenge
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               Challenge_ID:
+ *                 type: integer
+ *               feedback_text:
+ *                 type: string
+ *               rating:
+ *                 type: integer
+ *             required:
+ *               - Challenge_ID
+ *               - rating
+ *     responses:
+ *       201:
+ *         description: Feedback saved successfully
+ *       400:
+ *         description: Missing parameters or invalid rating
+ *       404:
+ *         description: Challenge not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.post('/challenges/feedback', cors(), saveFeedback);
 
 export default router;

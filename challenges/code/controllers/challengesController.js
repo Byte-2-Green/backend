@@ -42,6 +42,7 @@ export async function denyChallenge(req, res) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
 
+
 /**
  * Insert the challenge into the DeniedChallenges table
  */
@@ -66,13 +67,13 @@ export async function getDeniedChallenges(req, res) {
       JOIN Challenges ON DeniedChallenges.Challenge_ID = Challenges.Challenge_ID
   `;
   db.query(query, (err, results) => {
-      if (err) {
-          console.error('Error fetching denied challenges:', err);
-          return res.status(500).json({ error: 'Internal Server Error' });
-      }
-      res.status(200).json(results);
-    });
-  }
+    if (err) {
+      console.error('Error fetching denied challenges:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    res.status(200).json(results);
+  });
+}
 
 /**
  * Accept a challenge
@@ -126,13 +127,13 @@ export async function getAcceptedChallenges(req, res) {
       JOIN Challenges ON AcceptedChallenges.Challenge_ID = Challenges.Challenge_ID
   `;
   db.query(query, (err, results) => {
-      if (err) {
-          console.error('Error fetching accepted challenges:', err);
-          return res.status(500).json({ error: 'Internal Server Error' });
-      }
-      res.status(200).json(results);
-    });
-  }
+    if (err) {
+      console.error('Error fetching accepted challenges:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    res.status(200).json(results);
+  });
+}
 
 // Get all notifications 
 export async function getNotifications(req, res) {
@@ -167,5 +168,35 @@ export async function createNotification(req, res) {
       return res.status(500).json({ error: 'Internal Server Error' });
     }
     res.status(201).json({ id: results.insertId });
+  });
+}
+
+//save feedback function
+export async function saveFeedback(req, res) {
+
+  const { Challenge_ID, feedback_text, rating } = req.query;
+  if (!Challenge_ID || !rating) {
+    return res.status(400).json({ error: 'Challenge_ID and rating are required.' });
+  }
+
+  const checkQuery = 'SELECT * FROM Challenges WHERE Challenge_ID = ?';
+  db.query(checkQuery, [Challenge_ID], (checkErr, checkResults) => {
+    if (checkErr) {
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    if (checkResults.length === 0) {
+      return res.status(404).json({ error: 'Challenge not found.' });
+    }
+
+    const insertQuery = 'INSERT INTO Feedback (Challenge_ID, feedback_text, rating) VALUES (?, ?, ?)';
+    db.query(insertQuery, [Challenge_ID, feedback_text, rating], (insertErr, insertResults) => {
+      if (insertErr) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      return res.status(201).json({
+        message: 'Feedback saved!.',
+        Feedback_ID: insertResults.insertId
+      });
+    });
   });
 }
