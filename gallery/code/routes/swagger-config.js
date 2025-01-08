@@ -10,7 +10,7 @@ const swaggerDefinition = {
   servers: [
     {
       url: "http://localhost:3014",
-      description: "Educational Service",
+      description: "Gallery Service",
     },
   ],
 };

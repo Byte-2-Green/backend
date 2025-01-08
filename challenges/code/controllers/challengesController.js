@@ -36,15 +36,16 @@ export async function denyChallenge(req, res) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
 
-/**
- * Insert the challenge into the DeniedChallenges table
- */
-  const insertQuery = 'INSERT INTO DeniedChallenges (Challenge_ID, denied_at) VALUES (?, CURRENT_TIMESTAMP)';
-  db.query(insertQuery, [id], (insertErr, insertResults) => {
-    if (insertErr) {
-      console.error('Error denying challenge:', insertErr);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+    /**
+     * Insert the challenge into the DeniedChallenges table
+     */
+    const insertQuery =
+      'INSERT INTO DeniedChallenges (user_id, Challenge_ID) VALUES (?, ?)';
+    db.query(insertQuery, [user_id, id], (insertErr) => {
+      if (insertErr) {
+        console.error('Error denying challenge:', insertErr);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
       res.status(201).json({ message: 'Challenge denied successfully.' });
     });
   });
@@ -90,16 +91,17 @@ export async function acceptChallenge(req, res) {
     if (checkResults.length === 0) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
-    
-/**
- * Insert the challenge into the AcceptedChallenges table
- */
-  const insertQuery = 'INSERT INTO AcceptedChallenges (Challenge_ID, accepted_at) VALUES (?, CURRENT_TIMESTAMP)';
-  db.query(insertQuery, [id], (insertErr, insertResults) => {
-    if (insertErr) {
-      console.error('Error accepting challenge:', insertErr);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+
+    /**
+     * Insert the challenge into the AcceptedChallenges table
+     */
+    const insertQuery =
+      'INSERT INTO AcceptedChallenges (user_id, Challenge_ID) VALUES (?, ?)';
+    db.query(insertQuery, [user_id, id], (insertErr) => {
+      if (insertErr) {
+        console.error('Error accepting challenge:', insertErr);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
       res.status(201).json({ message: 'Challenge accepted successfully.' });
     });
   });

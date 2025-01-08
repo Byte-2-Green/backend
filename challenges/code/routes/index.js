@@ -62,7 +62,7 @@ router.get('/denied-challenges', cors(), getDeniedChallenges);
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the challenge to challenge
+ *         description: The ID of the challenge to accept
  *     responses:
  *       200:
  *         description: Challenge accepted successfully
