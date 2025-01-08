@@ -1,10 +1,10 @@
-import db from '../db.js';  // Import the MySQL connection
+import db from '../db.js';
 
 /**
  * Get all Challenges
  */
 export async function test(req, res) {
-  const query = 'SELECT * FROM Challenges';  // SQL query to fetch all records
+  const query = 'SELECT * FROM Challenges';
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching data:', err);
@@ -25,7 +25,7 @@ export async function denyChallenge(req, res) {
  */
 
   if (!id) {
-    return res.status(400).json({ error: 'Challenge ID are required.' });
+    return res.status(400).json({ error: 'Challenge ID is required.' });
   }
 
   /**
@@ -42,15 +42,16 @@ export async function denyChallenge(req, res) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
 
-    /**
-     * Insert the challenge into the DeniedChallenges table
-     */
-    const insertQuery = 'INSERT INTO DeniedChallenges (Challenge_ID) VALUES (?)';
-    db.query(insertQuery, [id], (insertErr, insertResults) => {
-      if (insertErr) {
-        console.error('Error denying challenge:', insertErr);
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
+
+/**
+ * Insert the challenge into the DeniedChallenges table
+ */
+  const insertQuery = 'INSERT INTO DeniedChallenges (Challenge_ID, denied_at) VALUES (?, CURRENT_TIMESTAMP)';
+  db.query(insertQuery, [id], (insertErr, insertResults) => {
+    if (insertErr) {
+      console.error('Error denying challenge:', insertErr);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
       res.status(201).json({ message: 'Challenge denied successfully.' });
     });
   });
@@ -61,7 +62,7 @@ export async function denyChallenge(req, res) {
  */
 export async function getDeniedChallenges(req, res) {
   const query = `
-      SELECT DeniedChallenges.Challenge_ID, Challenges.Title, Challenges.Description
+      SELECT DeniedChallenges.Challenge_ID, Challenges.Title, Challenges.Description, DeniedChallenges.denied_at
       FROM DeniedChallenges
       JOIN Challenges ON DeniedChallenges.Challenge_ID = Challenges.Challenge_ID
   `;
@@ -85,7 +86,7 @@ export async function acceptChallenge(req, res) {
  */
 
   if (!id) {
-    return res.status(400).json({ error: 'Challenge ID are required.' });
+    return res.status(400).json({ error: 'Challenge ID is required.' });
   }
 
   /**
@@ -102,15 +103,15 @@ export async function acceptChallenge(req, res) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
 
-    /**
-     * Insert the challenge into the AcceptedChallenges table
-     */
-    const insertQuery = 'INSERT INTO AcceptedChallenges (Challenge_ID) VALUES (?)';
-    db.query(insertQuery, [id], (insertErr, insertResults) => {
-      if (insertErr) {
-        console.error('Error accepting challenge:', insertErr);
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
+/**
+ * Insert the challenge into the AcceptedChallenges table
+ */
+  const insertQuery = 'INSERT INTO AcceptedChallenges (Challenge_ID, accepted_at) VALUES (?, CURRENT_TIMESTAMP)';
+  db.query(insertQuery, [id], (insertErr, insertResults) => {
+    if (insertErr) {
+      console.error('Error accepting challenge:', insertErr);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
       res.status(201).json({ message: 'Challenge accepted successfully.' });
     });
   });
@@ -121,7 +122,7 @@ export async function acceptChallenge(req, res) {
  */
 export async function getAcceptedChallenges(req, res) {
   const query = `
-      SELECT AcceptedChallenges.Challenge_ID, Challenges.Title, Challenges.Description
+      SELECT AcceptedChallenges.Challenge_ID, Challenges.Title, Challenges.Description, AcceptedChallenges.accepted_at
       FROM AcceptedChallenges
       JOIN Challenges ON AcceptedChallenges.Challenge_ID = Challenges.Challenge_ID
   `;
