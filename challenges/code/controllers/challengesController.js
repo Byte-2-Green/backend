@@ -1,10 +1,10 @@
-import db from '../db.js';  // Import the MySQL connection
+import db from '../db.js';
 
 /**
  * Get all Challenges
  */
 export async function test(req, res) {
-  const query = 'SELECT * FROM Challenges';  // SQL query to fetch all records
+  const query = 'SELECT * FROM Challenges';
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching data:', err);
@@ -36,13 +36,15 @@ export async function denyChallenge(req, res) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
 
-    const insertQuery =
-      'INSERT INTO DeniedChallenges (user_id, Challenge_ID) VALUES (?, ?)';
-    db.query(insertQuery, [user_id, id], (insertErr) => {
-      if (insertErr) {
-        console.error('Error denying challenge:', insertErr);
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
+/**
+ * Insert the challenge into the DeniedChallenges table
+ */
+  const insertQuery = 'INSERT INTO DeniedChallenges (Challenge_ID, denied_at) VALUES (?, CURRENT_TIMESTAMP)';
+  db.query(insertQuery, [id], (insertErr, insertResults) => {
+    if (insertErr) {
+      console.error('Error denying challenge:', insertErr);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
       res.status(201).json({ message: 'Challenge denied successfully.' });
     });
   });
@@ -54,7 +56,7 @@ export async function denyChallenge(req, res) {
  */
 export async function getDeniedChallenges(req, res) {
   const query = `
-      SELECT DeniedChallenges.Challenge_ID, Challenges.Title, Challenges.Description
+      SELECT DeniedChallenges.Challenge_ID, Challenges.Title, Challenges.Description, DeniedChallenges.denied_at
       FROM DeniedChallenges
       JOIN Challenges ON DeniedChallenges.Challenge_ID = Challenges.Challenge_ID
   `;
@@ -88,14 +90,16 @@ export async function acceptChallenge(req, res) {
     if (checkResults.length === 0) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
-
-    const insertQuery =
-      'INSERT INTO AcceptedChallenges (user_id, Challenge_ID) VALUES (?, ?)';
-    db.query(insertQuery, [user_id, id], (insertErr) => {
-      if (insertErr) {
-        console.error('Error accepting challenge:', insertErr);
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
+    
+/**
+ * Insert the challenge into the AcceptedChallenges table
+ */
+  const insertQuery = 'INSERT INTO AcceptedChallenges (Challenge_ID, accepted_at) VALUES (?, CURRENT_TIMESTAMP)';
+  db.query(insertQuery, [id], (insertErr, insertResults) => {
+    if (insertErr) {
+      console.error('Error accepting challenge:', insertErr);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
       res.status(201).json({ message: 'Challenge accepted successfully.' });
     });
   });
@@ -108,7 +112,7 @@ export async function acceptChallenge(req, res) {
  */
 export async function getAcceptedChallenges(req, res) {
   const query = `
-      SELECT AcceptedChallenges.Challenge_ID, Challenges.Title, Challenges.Description
+      SELECT AcceptedChallenges.Challenge_ID, Challenges.Title, Challenges.Description, AcceptedChallenges.accepted_at
       FROM AcceptedChallenges
       JOIN Challenges ON AcceptedChallenges.Challenge_ID = Challenges.Challenge_ID
   `;
@@ -154,5 +158,35 @@ export async function createNotification(req, res) {
       return res.status(500).json({ error: 'Internal Server Error' });
     }
     res.status(201).json({ id: results.insertId });
+  });
+}
+
+//save feedback function
+export async function saveFeedback(req, res) {
+
+  const { Challenge_ID, feedback_text, rating } = req.query;
+  if (!Challenge_ID || !rating) {
+    return res.status(400).json({ error: 'Challenge_ID and rating are required.' });
+  }
+
+  const checkQuery = 'SELECT * FROM Challenges WHERE Challenge_ID = ?';
+  db.query(checkQuery, [Challenge_ID], (checkErr, checkResults) => {
+    if (checkErr) {
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    if (checkResults.length === 0) {
+      return res.status(404).json({ error: 'Challenge not found.' });
+    }
+
+    const insertQuery = 'INSERT INTO Feedback (Challenge_ID, feedback_text, rating) VALUES (?, ?, ?)';
+    db.query(insertQuery, [Challenge_ID, feedback_text, rating], (insertErr, insertResults) => {
+      if (insertErr) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      return res.status(201).json({
+        message: 'Feedback saved!.',
+        Feedback_ID: insertResults.insertId
+      });
+    });
   });
 }
