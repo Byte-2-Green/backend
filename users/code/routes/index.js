@@ -198,4 +198,6 @@ router.put('/users/:id/co2saved', updateTotalCo2);
  */
 router.get('/users/:id/co2saved', getCo2Saved);
 
+router.get('/user/:userId', cors(), getUserById);
+
 export default router;

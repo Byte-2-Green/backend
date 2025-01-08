@@ -19,18 +19,12 @@ export async function test(req, res) {
  */
 export async function denyChallenge(req, res) {
   const { id } = req.params;
-
-  /**
- * Validate entrypoint
- */
+  const user_id = 1; // Default user_id for testing; replace with session user ID later
 
   if (!id) {
     return res.status(400).json({ error: 'Challenge ID is required.' });
   }
 
-  /**
- * Verify if the Id exists in the database
- */
   const checkQuery = 'SELECT * FROM Challenges WHERE Challenge_ID = ?';
   db.query(checkQuery, [id], (checkErr, checkResults) => {
     if (checkErr) {
@@ -41,7 +35,6 @@ export async function denyChallenge(req, res) {
     if (checkResults.length === 0) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
-
 
 /**
  * Insert the challenge into the DeniedChallenges table
@@ -56,6 +49,7 @@ export async function denyChallenge(req, res) {
     });
   });
 }
+
 
 /**
  * Get the DeniedChallenges
@@ -80,18 +74,12 @@ export async function getDeniedChallenges(req, res) {
  */
 export async function acceptChallenge(req, res) {
   const { id } = req.params;
-
-  /**
- * Validate entrypoint
- */
+  const user_id = 1; // Default user_id for testing
 
   if (!id) {
     return res.status(400).json({ error: 'Challenge ID is required.' });
   }
 
-  /**
- * Verify if the Id exists in the database
- */
   const checkQuery = 'SELECT * FROM Challenges WHERE Challenge_ID = ?';
   db.query(checkQuery, [id], (checkErr, checkResults) => {
     if (checkErr) {
@@ -102,7 +90,7 @@ export async function acceptChallenge(req, res) {
     if (checkResults.length === 0) {
       return res.status(404).json({ error: 'Challenge not found.' });
     }
-
+    
 /**
  * Insert the challenge into the AcceptedChallenges table
  */
@@ -117,8 +105,10 @@ export async function acceptChallenge(req, res) {
   });
 }
 
+
 /**
  * Get the AcceptedChallenges
+ * TODO: logic for getting accepted challenges is wrong
  */
 export async function getAcceptedChallenges(req, res) {
   const query = `

@@ -1,0 +1,11 @@
+CREATE DATABASE IF NOT EXISTS gallery_db;
+
+USE gallery_db;
+
+CREATE TABLE IF NOT EXISTS Gallery (
+    gallery_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    unlocked_frames INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -37,10 +37,21 @@ const userProxy = createProxyMiddleware({
   },
 });
 
+const galleryProxy = createProxyMiddleware({
+  target:'http://gallery:3014',
+  changeOrigin: true,
+  onError: (err, req, res) => {
+    console.error(`Error occurred while proxying: ${err.message}`);
+    res.status(502).json({ error: 'Microservice unavailable' });
+  },
+});
+
 router.use('/educational', cors(), educationalProxy);
 
 router.use('/challenges', cors(), challengeProxy);
 
 router.use('/users', cors(), userProxy);
+
+router.use('/gallery', cors(), galleryProxy);
 
 export default router;
