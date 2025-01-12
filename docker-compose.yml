@@ -140,14 +140,57 @@ services:
       start_period: 10s
       timeout: 20s
 
+  gallery:
+    build: ./gallery
+    volumes:
+      - ./gallery/code:/usr/src/app
+      - gallery-node-modules:/usr/src/app/node_modules 
+    networks:
+      - mygallery
+    ports:
+      - "${GALLERY_PORT}:${GALLERY_PORT}"
+    working_dir: /usr/src/app
+    command: /bin/bash -c "npm install && npm run dev"  
+    environment:
+      - GALLERY_DB_HOST=${GALLERY_DB_HOST}:${GALLERY_MYSQL_PORT}
+      - GALLERY_DB_NAME=${GALLERY_DB_NAME}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      mysql-server-gallery:
+        condition: service_healthy
+
+  mysql-server-gallery:
+    image: mysql:8.0
+    networks:
+      - mygallery
+    environment:
+      - MYSQL_DATABASE=${GALLERY_DB_NAME}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "${GALLERY_MYSQL_PORT}:${MYSQL_PORT}"
+    volumes:
+      - ./gallery/mysql/initdb:/docker-entrypoint-initdb.d
+      - mysql-data-gallery:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 20s
+
   phpmyadmin:
     image: phpmyadmin:latest
     networks:
       - myeducational
       - mychallenges
       - myusers
+      - mygallery
     environment:
-      - PMA_HOSTS=mysql-server-educational,mysql-server-challenges,mysql-server-users
+      - PMA_HOSTS=mysql-server-educational,mysql-server-challenges,mysql-server-users,mysql-server-gallery
       - PMA_USER=${MYSQL_USER}
       - PMA_PASSWORD=${MYSQL_PASSWORD}
     ports:
@@ -160,11 +203,15 @@ networks:
     driver: bridge
   myusers:
     driver: bridge
+  mygallery:
+    driver: bridge
 
 volumes:
   mysql-data-educational:
   mysql-data-challenges:
   mysql-data-users:
+  mysql-data-gallery:
   educational-node-modules: 
   challenges-node-modules:  
   users-node-modules: 
+  gallery-node-modules: 
