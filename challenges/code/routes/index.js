@@ -1,5 +1,5 @@
 import express from 'express';
-import { test, getNotificationById, saveFeedback, getNotifications, createNotification, denyChallenge, getDeniedChallenges, acceptChallenge, getAcceptedChallenges } from '../controllers/challengesController.js';
+import { getAllChallenges, getChallenges, getNotificationById, saveFeedback, getNotifications, createNotification, denyChallenge, getDeniedChallenges, acceptChallenge, getAcceptedChallenges } from '../controllers/challengesController.js';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger-config.js';
@@ -18,7 +18,18 @@ router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *       200:
  *         description: A list of challenges
  */
-router.get('/challenges', cors(), test);
+router.get('/all', cors(), getAllChallenges);
+
+/**
+ * @swagger
+ * /challenges:
+ *   get:
+ *     summary: Get not completed challenges
+ *     responses:
+ *       200:
+ *         description: A list of challenges
+ */
+router.get('/challenges', cors(), getChallenges);
 
 /**
  * @swagger
